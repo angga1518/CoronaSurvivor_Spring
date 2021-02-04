@@ -30,4 +30,4 @@ jobs:
         app-name: 'coronasurvivor'
         slot-name: 'production'
         publish-profile: ${{ secrets.AzureAppService_PublishProfile_deb8d9d0b8ae47f9823199fa2af737ad }}
-        package: '${{ github.workspace }}/target/*.war'
+        package: '${{ github.workspace }}/target/corona-survivor.war'
