@@ -20,6 +20,12 @@ public class PushNotificationController {
         this.pushNotificationService = pushNotificationService;
     }
 
+//    test, remove this to home controller
+    @GetMapping("/ping")
+    public ResponseEntity ping() {
+        return new ResponseEntity<>("pong", HttpStatus.OK);
+    }
+
     @PostMapping("/notification/topic")
     public ResponseEntity sendNotification(@RequestBody PushNotificationRequest request) {
         pushNotificationService.sendPushNotificationWithoutData(request);
