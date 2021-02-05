@@ -24,6 +24,12 @@ jobs:
     - name: Build with Maven
       run: mvn clean install
 
+    - name: create ls
+      run: ls ${{ github.workspace }}/target/*.war > check.txt
+
+    - name: see ls
+      run: echo check.txt
+
     - uses: actions/upload-artifact@v2
       with:
         name: deploy-artifact
