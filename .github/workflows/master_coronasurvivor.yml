@@ -21,11 +21,11 @@ jobs:
       with:
         java-version: '11'
 
-    - name: Build with Maven
-      run: mvn clean install
+    # - name: Build with Maven
+    #   run: mvn clean install
 
     - name: create ls
-      run: ls ${{ github.workspace }}/target/*.war > check.txt
+      run: ls ${{ github.workspace }}/target > check.txt
 
     - name: see ls
       run: echo check.txt
