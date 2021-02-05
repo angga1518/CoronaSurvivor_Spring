@@ -33,7 +33,7 @@ jobs:
     - uses: actions/upload-artifact@v2
       with:
         name: deploy-artifact
-        path: ${{ github.workspace }}/target/*.war
+        path: ${{ github.workspace }}/target/*.jar
 
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v2
@@ -41,4 +41,4 @@ jobs:
         app-name: 'coronasurvivor'
         slot-name: 'production'
         publish-profile: ${{ secrets.AzureAppService_PublishProfile_00f40e01a8e34e0eb784c4ddfa89c9fd }}
-        package: '${{ github.workspace }}/target/*.war'
+        package: '${{ github.workspace }}/target/*.jar'
