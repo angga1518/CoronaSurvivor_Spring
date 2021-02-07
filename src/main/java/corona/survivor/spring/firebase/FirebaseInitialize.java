@@ -24,11 +24,14 @@ public class FirebaseInitialize {
     @PostConstruct
     public void initialize() {
         try {
+            logger.info("aman");
             FirebaseOptions options = new FirebaseOptions.Builder()
                     .setCredentials(GoogleCredentials.fromStream(new ClassPathResource(firebaseConfigPath).getInputStream())).build();
             if (FirebaseApp.getApps().isEmpty()) {
                 FirebaseApp.initializeApp(options);
                 logger.info("Firebase application has been initialized");
+            }else{
+                logger.info("eh");
             }
         } catch (Exception e) {
             e.printStackTrace();
