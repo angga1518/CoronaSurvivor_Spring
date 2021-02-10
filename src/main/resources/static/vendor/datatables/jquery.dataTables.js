@@ -91,7 +91,6 @@
 	 *      } );
 	 *    } );
 	 */
-
 	var DataTable = function ( options )
 	{
 		/**
