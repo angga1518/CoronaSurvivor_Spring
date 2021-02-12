@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component;
 @Component()
 public class Pengguna {
 
-    private String id;
     private String email;
     private String name;
 
@@ -13,22 +12,13 @@ public class Pengguna {
         super();
     }
 
-    public Pengguna(String id, String email, String name) {
-        this.id = id;
+    public Pengguna(String email, String name) {
         this.email = email;
         this.name = name;
     }
 
-    public String getId() {
-        return this.id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public String getEmail() {
-        return this.email;
+        return email;
     }
 
     public void setEmail(String email) {
@@ -36,11 +26,10 @@ public class Pengguna {
     }
 
     public String getName() {
-        return this.name;
+        return name;
     }
 
     public void setName(String name) {
         this.name = name;
     }
-
 }

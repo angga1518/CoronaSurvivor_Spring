@@ -1,10 +1,12 @@
 package corona.survivor.spring.firebase;
 
 import com.google.auth.oauth2.GoogleCredentials;
+import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.FirestoreOptions;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 
+import com.google.firebase.cloud.FirestoreClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.core.io.ClassPathResource;
@@ -40,5 +42,8 @@ public class FirebaseInitialize {
             e.printStackTrace();
         }
 
+    }
+    public Firestore getFirebase(){
+        return FirestoreClient.getFirestore();
     }
 }

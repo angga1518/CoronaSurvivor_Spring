@@ -18,13 +18,13 @@ public class PenggunaService {
 
     public Pengguna createPengguna(Pengguna pengguna) throws InterruptedException, ExecutionException {
         Firestore dbFirestore = FirestoreClient.getFirestore();
-        dbFirestore.collection(COL_NAME).document(pengguna.getId()).set(pengguna);
+        dbFirestore.collection(COL_NAME).document(pengguna.getEmail()).set(pengguna);
         return pengguna;
     }
 
-    public Pengguna getPengguna(String id) throws InterruptedException, ExecutionException {
+    public Pengguna getPengguna(String email) throws InterruptedException, ExecutionException {
         Firestore dbFirestore = FirestoreClient.getFirestore();
-        DocumentReference documentReference = dbFirestore.collection(COL_NAME).document(id);
+        DocumentReference documentReference = dbFirestore.collection(COL_NAME).document(email);
         ApiFuture<DocumentSnapshot> future = documentReference.get();
 
         DocumentSnapshot document = future.get();

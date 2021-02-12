@@ -1,4 +1,4 @@
-package corona.survivor.spring.controller;
+package corona.survivor.spring.restcontroller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +21,7 @@ public class PenggunaController {
     }
 
     @GetMapping("/get")
-    public Pengguna getPengguna(@RequestParam String id) throws InterruptedException, ExecutionException {
-        return penggunaService.getPengguna(id);
+    public Pengguna getPengguna(@RequestParam String email) throws InterruptedException, ExecutionException {
+        return penggunaService.getPengguna(email);
     }
 }
