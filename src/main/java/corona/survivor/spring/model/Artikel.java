@@ -17,12 +17,13 @@ public class Artikel {
     private int jumlahView;
     private int jumlahLike;
     private List<String> listIdComment;
+    private String imageUrl;
 
     public Artikel(){
         super();
     }
 
-    public Artikel(String author, String institusi, String deskripsi, String judul, String idArtikel, Date tanggalPost, int jumlahView, int jumlahLike, List<String> listIdComment) {
+    public Artikel(String author, String institusi, String deskripsi, String judul, String idArtikel, Date tanggalPost, int jumlahView, int jumlahLike, List<String> listIdComment, String imageUrl) {
         this.author = author;
         this.institusi = institusi;
         this.deskripsi = deskripsi;
@@ -32,6 +33,7 @@ public class Artikel {
         this.jumlahView = jumlahView;
         this.jumlahLike = jumlahLike;
         this.listIdComment = listIdComment;
+        this.imageUrl = imageUrl;
     }
 
     public String getAuthor() {
@@ -104,5 +106,13 @@ public class Artikel {
 
     public void setListIdComment(List<String> listIdComment) {
         this.listIdComment = listIdComment;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

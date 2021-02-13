@@ -4,6 +4,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.List;
 
 @Component()
 public class Pengguna {
@@ -17,18 +18,20 @@ public class Pengguna {
     private String jenisKelamin;
     private String domisili;
     private String noTelepon;
+    private List<String> listIdArtikelDisimpan;
 
     public Pengguna() {
         super();
     }
 
-    public Pengguna(String email, String namaLengkap, Date tanggalLahir, String jenisKelamin, String domisili, String noTelepon) {
+    public Pengguna(String email, String namaLengkap, Date tanggalLahir, String jenisKelamin, String domisili, String noTelepon, List<String> listIdArtikelDisimpan) {
         this.email = email;
         this.namaLengkap = namaLengkap;
         this.tanggalLahir = tanggalLahir;
         this.jenisKelamin = jenisKelamin;
         this.domisili = domisili;
         this.noTelepon = noTelepon;
+        this.listIdArtikelDisimpan = listIdArtikelDisimpan;
     }
 
     public String getEmail() {
@@ -77,5 +80,13 @@ public class Pengguna {
 
     public void setNoTelepon(String noTelepon) {
         this.noTelepon = noTelepon;
+    }
+
+    public List<String> getListIdArtikelDisimpan() {
+        return listIdArtikelDisimpan;
+    }
+
+    public void setListIdArtikelDisimpan(List<String> listIdArtikelDisimpan) {
+        this.listIdArtikelDisimpan = listIdArtikelDisimpan;
     }
 }
