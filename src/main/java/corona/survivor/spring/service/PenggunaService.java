@@ -14,7 +14,7 @@ import java.util.concurrent.ExecutionException;
 @Service
 public class PenggunaService {
 
-    public static final String COL_NAME = "pengguna";
+    public static final String COL_NAME = "Pengguna";
 
     public Pengguna createPengguna(Pengguna pengguna) throws InterruptedException, ExecutionException {
         Firestore dbFirestore = FirestoreClient.getFirestore();

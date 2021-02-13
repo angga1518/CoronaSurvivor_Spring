@@ -46,4 +46,14 @@ public class DataPenerimaDonorController {
         return listDataPenerimaDonor;
     }
 
+    @GetMapping("/getDataPenerimaDonor")
+    public DataPenerimaDonor getDataPenerimaDonor(@RequestParam String idDataPenerimaDonor) throws InterruptedException, ExecutionException {
+        return dataPenerimaDonorService.getDataPenerimaDonorDetails(idDataPenerimaDonor);
+    }
+
+    @DeleteMapping("/deleteDataPemberiDonort")
+    public String deleteDataPenerimaDonor(@RequestParam String idDataPenerimaDonor) {
+        return dataPenerimaDonorService.deleteDataPemberiDonor(idDataPenerimaDonor);
+    }
+
 }

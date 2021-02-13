@@ -4,6 +4,7 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
 import corona.survivor.spring.firebase.FirebaseInitialize;
+import corona.survivor.spring.model.DataPemberiDonor;
 import corona.survivor.spring.model.DataPenerimaDonor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,6 +35,7 @@ public class DataPenerimaDonorService {
         CollectionReference dataPenerimaDonor = db.getFirebase().collection(COL_NAME);
         ApiFuture<QuerySnapshot> querySnapshot = dataPenerimaDonor.get();
         for (DocumentSnapshot doc : querySnapshot.get().getDocuments()) {
+//            System.out.println(doc.getId());
             DataPenerimaDonor dataPenerimaDonorTemp = doc.toObject(DataPenerimaDonor.class);
             if (dataPenerimaDonorTemp.getEmailPendaftar().equals(email)) {
                 listPenerimaDonor.add(dataPenerimaDonorTemp);
@@ -52,5 +54,28 @@ public class DataPenerimaDonorService {
 
         }
         return listPenerimaDonor;
+    }
+
+    public DataPenerimaDonor getDataPenerimaDonorDetails(String idDataPenerimaDonor) throws InterruptedException,ExecutionException{
+        Firestore dbFirestore = FirestoreClient.getFirestore();
+        DocumentReference documentReference = dbFirestore.collection(COL_NAME).document(idDataPenerimaDonor);
+        ApiFuture<DocumentSnapshot> future = documentReference.get();
+        DocumentSnapshot document = future.get();
+
+        DataPenerimaDonor dataPenerimaDonor = null;
+
+        if(document.exists()){
+            dataPenerimaDonor = document.toObject(DataPenerimaDonor.class);
+            return dataPenerimaDonor;
+        }
+        else {
+            return null;
+        }
+    }
+
+    public String deleteDataPemberiDonor(String idDataPenerimaDonor) {
+        Firestore dbFirestore = FirestoreClient.getFirestore();
+        ApiFuture<WriteResult> writeResult = dbFirestore.collection(COL_NAME).document(idDataPenerimaDonor).delete();
+        return "Document with DataPemberiDonor ID "+ idDataPenerimaDonor +" has been deleted";
     }
 }
