@@ -19,7 +19,7 @@ public class DataPemberiDonorController {
         return dataPemberiDonorService.saveDataPemberiDonor(dataPemberiDonor);
     }
 
-    @GetMapping("/getDataPemberiDonor")
+    @GetMapping("/getDataPemberiDonorByEmail")
     public List<DataPemberiDonor> getDataPemberiDonorByEmail(@RequestParam String email){
         List<DataPemberiDonor> listDataPemberiDonor = new ArrayList<>();
         try{
@@ -50,7 +50,7 @@ public class DataPemberiDonorController {
         return dataPemberiDonorService.getDataPemberiDonorDetails(idDataPemberiDonor);
     }
 
-    @DeleteMapping("/deleteDataPemberiDonort")
+    @DeleteMapping("/deleteDataPemberiDonor")
     public String deleteDataPemberiDonor(@RequestParam String idDataPemberiDonor) {
         return dataPemberiDonorService.deleteDataPemberiDonor(idDataPemberiDonor);
     }

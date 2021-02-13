@@ -20,7 +20,7 @@ public class DataPenerimaDonorController {
         return dataPenerimaDonorService.saveDataPendonor(dataPenerimaDonor);
     }
 
-    @GetMapping("/getDataPenerimaDonor")
+    @GetMapping("/getDataPenerimaDonorByEmail")
     public List<DataPenerimaDonor> getDataPenerimaDonorByEmail(@RequestParam String email){
         List<DataPenerimaDonor> listDataPenerimaDonor = new ArrayList<DataPenerimaDonor>();
         try{
