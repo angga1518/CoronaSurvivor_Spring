@@ -1,4 +1,4 @@
-package corona.survivor.spring.controller;
+package corona.survivor.spring.restcontroller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
