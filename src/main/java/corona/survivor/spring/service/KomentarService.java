@@ -7,6 +7,7 @@ import corona.survivor.spring.firebase.FirebaseInitialize;
 import corona.survivor.spring.model.Artikel;
 import corona.survivor.spring.model.Komentar;
 import corona.survivor.spring.model.Pengguna;
+import corona.survivor.spring.rest.ArtikelPayload;
 import corona.survivor.spring.rest.KomentarPayload;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,9 @@ public class KomentarService {
 
     @Autowired
     ArtikelService artikelService;
+
+    @Autowired
+    PenggunaService penggunaService;
 
     public Komentar createKomentar(Komentar komentar, String idArtikel) throws InterruptedException,ExecutionException{
         final String uuid = UUID.randomUUID().toString().replace("-", "");
@@ -93,8 +97,9 @@ public class KomentarService {
         }
     }
 
-    public List<KomentarPayload> getAllKomentarWithReplies(List<Komentar> listKomentar) throws InterruptedException, ExecutionException{
+    public List<KomentarPayload> getAllKomentarWithReplies(List<Komentar> listKomentar, String email) throws InterruptedException, ExecutionException{
         List<KomentarPayload> komentarPayloadList = new ArrayList<>();
+        Pengguna pengguna = penggunaService.getPengguna(email);
         for(Komentar komentar : listKomentar){
             KomentarPayload komentarPayload = new KomentarPayload();
             komentarPayload.setIdKomentar(komentar.getIdKomentar());
@@ -104,6 +109,12 @@ public class KomentarService {
             komentarPayload.setTanggalPost(komentar.getTanggalPost());
             List<Komentar> initializeListPayload = new ArrayList<>();
             komentarPayload.setReplies(initializeListPayload);
+            if(pengguna.getListIdLikedKomentar() != null){
+                List<String> listLikedKomentar = pengguna.getListIdLikedKomentar();
+                if(pengguna.getListIdLikedKomentar().contains(komentar.getIdKomentar())){
+                    komentarPayload.setLiked(true);
+                }
+            }
             for (String idReply : komentar.getListIdReply()){
                 Komentar reply = getKomentarById(idReply);
                 komentarPayload.getReplies().add(reply);
@@ -111,6 +122,24 @@ public class KomentarService {
             komentarPayloadList.add(komentarPayload);
         }
         return komentarPayloadList;
+    }
+
+    public String handleLikedKomentar(KomentarPayload komentarPayload, String email) throws InterruptedException,ExecutionException{
+        Pengguna pengguna = penggunaService.getPengguna(email);
+        Firestore dbFirestore = FirestoreClient.getFirestore();
+        if(pengguna.getListIdLikedKomentar() == null){
+            List<String> iniatializeList = new ArrayList<>();
+            pengguna.setListIdLikedKomentar(iniatializeList);
+        }
+        if(komentarPayload.isLiked()){
+            pengguna.getListIdLikedKomentar().add(komentarPayload.getIdKomentar());
+            dbFirestore.collection("Pengguna").document(pengguna.getEmail()).set(pengguna);
+            return "komentar berhasil dilike";
+        }else {
+            pengguna.getListIdLikedKomentar().remove(komentarPayload.getIdKomentar());
+            dbFirestore.collection("Pengguna").document(pengguna.getEmail()).set(pengguna);
+            return "Artikel berhasil diunlike";
+        }
     }
 
 }

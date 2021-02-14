@@ -5,7 +5,6 @@ import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
 import corona.survivor.spring.firebase.FirebaseInitialize;
 import corona.survivor.spring.model.Artikel;
-import corona.survivor.spring.model.Komentar;
 import corona.survivor.spring.model.Pengguna;
 import corona.survivor.spring.rest.ArtikelPayload;
 import corona.survivor.spring.rest.BaseResponse;
@@ -105,7 +104,7 @@ public class ArtikelService {
         artikelPayload.setIdArtikel(artikel.getIdArtikel());
         artikelPayload.setImageUrl(artikel.getImageUrl());
         artikelPayload.setInstitusi(artikel.getInstitusi());
-        artikelPayload.setJudul(artikel.getInstitusi());
+        artikelPayload.setJudul(artikel.getJudul());
         artikelPayload.setJumlahLike(artikel.getJumlahLike());
         artikelPayload.setJumlahView(artikel.getJumlahView());
         artikelPayload.setListIdComment(artikel.getListIdComment());
@@ -113,28 +112,33 @@ public class ArtikelService {
         return artikelPayload;
     }
 
-    public BaseResponse<ArtikelPayload> handleLikedArtikel(ArtikelPayload artikel, String email) throws InterruptedException,ExecutionException{
+    public String handleLikedArtikel(ArtikelPayload artikel, String email) throws InterruptedException,ExecutionException{
         Pengguna pengguna = penggunaService.getPengguna(email);
+        Firestore dbFirestore = FirestoreClient.getFirestore();
         if(pengguna.getListIdLikedArtikel() == null){
             List<String> iniatializeList = new ArrayList<>();
             pengguna.setListIdLikedArtikel(iniatializeList);
         }
         if(artikel.isLiked()){
             pengguna.getListIdLikedArtikel().add(artikel.getIdArtikel());
-            return new BaseResponse<ArtikelPayload>(200,"Artikel " + artikel.getJudul() + " Telah Dilike", artikel );
+            dbFirestore.collection("Pengguna").document(pengguna.getEmail()).set(pengguna);
+            return "Artikel berhasil dilike";
         }else {
             pengguna.getListIdLikedArtikel().remove(artikel.getIdArtikel());
-            return new BaseResponse<ArtikelPayload>(200,"Artikel " + artikel.getJudul() + " Telah Diunlike", artikel );
+            dbFirestore.collection("Pengguna").document(pengguna.getEmail()).set(pengguna);
+            return "Artikel berhasil diunlike";
         }
     }
 
-    public BaseResponse<ArtikelPayload> handleSavedArtikel(ArtikelPayload artikel,String email) throws InterruptedException,ExecutionException{
+    public String handleSavedArtikel(ArtikelPayload artikel,String email) throws InterruptedException,ExecutionException{
         Pengguna pengguna = penggunaService.getPengguna(email);
         if(pengguna.getListIdLikedArtikel() == null){
             List<String> iniatializeList = new ArrayList<>();
             pengguna.setListIdArtikelDisimpan(iniatializeList);
         }
         pengguna.getListIdArtikelDisimpan().add(artikel.getIdArtikel());
-        return new BaseResponse<ArtikelPayload>(200,"Artikel " + artikel.getJudul() + " Telah Disimpan", artikel );
+        Firestore dbFirestore = FirestoreClient.getFirestore();
+        dbFirestore.collection("Pengguna").document(pengguna.getEmail()).set(pengguna);
+        return "Artikel berhasil disimpan";
     }
 }

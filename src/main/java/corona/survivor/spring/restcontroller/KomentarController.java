@@ -3,6 +3,8 @@ package corona.survivor.spring.restcontroller;
 import corona.survivor.spring.model.Artikel;
 import corona.survivor.spring.model.DataPenerimaDonor;
 import corona.survivor.spring.model.Komentar;
+import corona.survivor.spring.rest.ArtikelPayload;
+import corona.survivor.spring.rest.BaseResponse;
 import corona.survivor.spring.rest.KomentarPayload;
 import corona.survivor.spring.service.KomentarService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,12 +26,12 @@ public class KomentarController {
     }
 
     @GetMapping("/getKomentarArtikel")
-    public List<KomentarPayload> getAllKomentar(@RequestParam String idArtikel){
+    public List<KomentarPayload> getAllKomentar(@RequestParam String idArtikel , @RequestParam String email){
         List<Komentar> listKomentar = new ArrayList<Komentar>();
         List<KomentarPayload> listKomentarPayload = new ArrayList<>();
         try{
             listKomentar = komentarService.getAllKomentarByIdArtikel(idArtikel);
-            listKomentarPayload = komentarService.getAllKomentarWithReplies(listKomentar);
+            listKomentarPayload = komentarService.getAllKomentarWithReplies(listKomentar,email);
         }
         catch (Exception e){
             System.out.println(e);
@@ -41,5 +43,11 @@ public class KomentarController {
     @PostMapping("/createReply")
     public Komentar postReply(@RequestBody Komentar komentar, @RequestParam String idParentKomentar) throws InterruptedException, ExecutionException {
         return komentarService.createReplies(komentar,idParentKomentar);
+    }
+
+    @PostMapping("/postLikedKomentar")
+    public BaseResponse<KomentarPayload> postLikedArtikel(@RequestBody KomentarPayload komentarPayload, @RequestParam String email) throws InterruptedException, ExecutionException{
+        String message = komentarService.handleLikedKomentar(komentarPayload,email);
+        return new BaseResponse<>(200,message,komentarPayload);
     }
 }
