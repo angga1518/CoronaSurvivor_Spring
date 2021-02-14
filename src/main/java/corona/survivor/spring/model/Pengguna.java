@@ -20,11 +20,14 @@ public class Pengguna {
     private String noTelepon;
     private List<String> listIdArtikelDisimpan;
 
-    public Pengguna() {
+    private List<String> listIdLikedArtikel;
+    private List<String> listIdLikedKomentar;
+
+    public Pengguna(){
         super();
     }
 
-    public Pengguna(String email, String namaLengkap, Date tanggalLahir, String jenisKelamin, String domisili, String noTelepon, List<String> listIdArtikelDisimpan) {
+    public Pengguna(String email, String namaLengkap, Date tanggalLahir, String jenisKelamin, String domisili, String noTelepon, List<String> listIdArtikelDisimpan, List<String> listIdLikedArtikel, List<String> listIdLikedKomentar) {
         this.email = email;
         this.namaLengkap = namaLengkap;
         this.tanggalLahir = tanggalLahir;
@@ -32,6 +35,8 @@ public class Pengguna {
         this.domisili = domisili;
         this.noTelepon = noTelepon;
         this.listIdArtikelDisimpan = listIdArtikelDisimpan;
+        this.listIdLikedArtikel = listIdLikedArtikel;
+        this.listIdLikedKomentar = listIdLikedKomentar;
     }
 
     public String getEmail() {
@@ -88,5 +93,21 @@ public class Pengguna {
 
     public void setListIdArtikelDisimpan(List<String> listIdArtikelDisimpan) {
         this.listIdArtikelDisimpan = listIdArtikelDisimpan;
+    }
+
+    public List<String> getListIdLikedArtikel() {
+        return listIdLikedArtikel;
+    }
+
+    public void setListIdLikedArtikel(List<String> listIdLikedArtikel) {
+        this.listIdLikedArtikel = listIdLikedArtikel;
+    }
+
+    public List<String> getListIdLikedKomentar() {
+        return listIdLikedKomentar;
+    }
+
+    public void setListIdLikedKomentar(List<String> listIdLikedKomentar) {
+        this.listIdLikedKomentar = listIdLikedKomentar;
     }
 }

@@ -18,6 +18,7 @@ public class KomentarPayload {
     private int jumlahLike;
 
     private List<Komentar> replies;
+    private boolean isLiked;
 
     public String getIdKomentar() {
         return idKomentar;
@@ -65,5 +66,13 @@ public class KomentarPayload {
 
     public void setReplies(List<Komentar> replies) {
         this.replies = replies;
+    }
+
+    public boolean isLiked() {
+        return isLiked;
+    }
+
+    public void setLiked(boolean liked) {
+        isLiked = liked;
     }
 }
