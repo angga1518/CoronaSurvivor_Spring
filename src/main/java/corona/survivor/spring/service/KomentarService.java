@@ -1,14 +1,14 @@
 package corona.survivor.spring.service;
 
 import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.DocumentReference;
-import com.google.cloud.firestore.DocumentSnapshot;
-import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.WriteResult;
+import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
 import corona.survivor.spring.firebase.FirebaseInitialize;
 import corona.survivor.spring.model.Artikel;
 import corona.survivor.spring.model.Komentar;
+import corona.survivor.spring.model.Pengguna;
+import corona.survivor.spring.rest.ArtikelPayload;
+import corona.survivor.spring.rest.KomentarPayload;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +27,9 @@ public class KomentarService {
 
     @Autowired
     ArtikelService artikelService;
+
+    @Autowired
+    PenggunaService penggunaService;
 
     public Komentar createKomentar(Komentar komentar, String idArtikel) throws InterruptedException,ExecutionException{
         final String uuid = UUID.randomUUID().toString().replace("-", "");
@@ -48,8 +51,12 @@ public class KomentarService {
         komentar.setIdKomentar(uuid);
         Firestore dbFirestore = FirestoreClient.getFirestore();
         Komentar parentKomentar = getKomentarById(idParentKomentar);
-        parentKomentar.getListIdReply().add(uuid);
-        dbFirestore.collection(COL_NAME).document(parentKomentar.getIdKomentar()).set(komentar);
+        if(parentKomentar.getListIdReply() == null){
+            List<String> listIdReplies = new ArrayList<>();
+            parentKomentar.setListIdReply(listIdReplies);
+        }
+        parentKomentar.getListIdReply().add(komentar.getIdKomentar());
+        dbFirestore.collection(COL_NAME).document(parentKomentar.getIdKomentar()).set(parentKomentar);
         ApiFuture<WriteResult> collectionsApiFuture = dbFirestore.collection(COL_NAME).document(uuid).set(komentar);
         return komentar;
     }
@@ -68,6 +75,70 @@ public class KomentarService {
         }
         else {
             return null;
+        }
+    }
+
+    public List<Komentar> getAllKomentarByIdArtikel(String idArtikel) throws InterruptedException, ExecutionException{
+        List<Komentar> listKomentar = new ArrayList<Komentar>();
+        Artikel artikel = artikelService.getArtikelById(idArtikel);
+        List<String> listIdKomentar = artikel.getListIdComment();
+        if(listIdKomentar != null){
+            CollectionReference komentar = db.getFirebase().collection(COL_NAME);
+            ApiFuture<QuerySnapshot> querySnapshot = komentar.get();
+            for (DocumentSnapshot doc : querySnapshot.get().getDocuments()) {
+                if (listIdKomentar.contains(doc.getId())) {
+                    Komentar komentarTemp = doc.toObject(Komentar.class);
+                    listKomentar.add(komentarTemp);
+                }
+            }
+            return listKomentar;
+        }else {
+            return listKomentar;
+        }
+    }
+
+    public List<KomentarPayload> getAllKomentarWithReplies(List<Komentar> listKomentar, String email) throws InterruptedException, ExecutionException{
+        List<KomentarPayload> komentarPayloadList = new ArrayList<>();
+        Pengguna pengguna = penggunaService.getPengguna(email);
+        for(Komentar komentar : listKomentar){
+            KomentarPayload komentarPayload = new KomentarPayload();
+            komentarPayload.setIdKomentar(komentar.getIdKomentar());
+            komentarPayload.setIsi(komentar.getIsi());
+            komentarPayload.setJumlahLike(komentar.getJumlahLike());
+            komentarPayload.setNamaLengkap(komentar.getNamaLengkap());
+            komentarPayload.setTanggalPost(komentar.getTanggalPost());
+            List<Komentar> initializeListPayload = new ArrayList<>();
+            komentarPayload.setReplies(initializeListPayload);
+            if(pengguna.getListIdLikedKomentar() != null){
+                List<String> listLikedKomentar = pengguna.getListIdLikedKomentar();
+                if(pengguna.getListIdLikedKomentar().contains(komentar.getIdKomentar())){
+                    komentarPayload.setLiked(true);
+                }
+            }
+            for (String idReply : komentar.getListIdReply()){
+                Komentar reply = getKomentarById(idReply);
+                komentarPayload.getReplies().add(reply);
+            }
+            komentarPayloadList.add(komentarPayload);
+        }
+        return komentarPayloadList;
+    }
+
+    public String handleLikedKomentar(KomentarPayload komentarPayload, String email) throws InterruptedException,ExecutionException{
+        Pengguna pengguna = penggunaService.getPengguna(email);
+        Firestore dbFirestore = FirestoreClient.getFirestore();
+        if(pengguna.getListIdLikedKomentar() == null){
+            List<String> iniatializeList = new ArrayList<>();
+            pengguna.setListIdLikedKomentar(iniatializeList);
+        }
+        if(komentarPayload.isLiked()){
+            pengguna.getListIdLikedKomentar().add(komentarPayload.getIdKomentar());
+            dbFirestore.collection("Pengguna").document(pengguna.getEmail()).set(pengguna);
+            return "komentar berhasil dilike";
+        }else {
+            pengguna.getListIdLikedKomentar().remove(komentarPayload.getIdKomentar());
+            dbFirestore.collection("Pengguna").document(pengguna.getEmail()).set(pengguna);
+            return "Artikel berhasil diunlike";
         }
     }
 

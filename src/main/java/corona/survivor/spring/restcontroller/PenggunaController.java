@@ -1,5 +1,6 @@
 package corona.survivor.spring.restcontroller;
 
+import corona.survivor.spring.rest.BaseResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,12 +17,18 @@ public class PenggunaController {
     PenggunaService penggunaService;
 
     @PostMapping("/create")
-    public Pengguna createPengguna(@RequestBody Pengguna pengguna) throws InterruptedException, ExecutionException {
-        return penggunaService.createPengguna(pengguna);
+    public BaseResponse<Pengguna> createPengguna(@RequestBody Pengguna pengguna) throws InterruptedException, ExecutionException {
+        Pengguna penggunaCreated =  penggunaService.createPengguna(pengguna);
+        return new BaseResponse<Pengguna>(200,"Success",penggunaCreated);
     }
 
     @GetMapping("/get")
-    public Pengguna getPengguna(@RequestParam String email) throws InterruptedException, ExecutionException {
-        return penggunaService.getPengguna(email);
+    public BaseResponse<Pengguna> getPengguna(@RequestParam String email) throws InterruptedException, ExecutionException {
+        Pengguna penggunaCreated =penggunaService.getPengguna(email);
+        if(penggunaCreated != null){
+            return new BaseResponse<Pengguna>(200,"Success",penggunaCreated);
+        }else{
+            return new BaseResponse<Pengguna>(400,"Not Found",penggunaCreated);
+        }
     }
 }

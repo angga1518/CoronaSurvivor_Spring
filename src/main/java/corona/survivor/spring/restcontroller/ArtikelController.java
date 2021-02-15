@@ -1,12 +1,10 @@
 package corona.survivor.spring.restcontroller;
 
-import corona.survivor.spring.model.Artikel;
-import corona.survivor.spring.model.DataPemberiDonor;
+import corona.survivor.spring.rest.ArtikelPayload;
+import corona.survivor.spring.rest.BaseResponse;
 import corona.survivor.spring.service.ArtikelService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,33 +17,49 @@ public class ArtikelController {
     ArtikelService artikelService;
 
     @GetMapping("/getSavedArtikel")
-    public List<Artikel> getDataPemberiDonorByEmail(@RequestParam String email){
-        List<Artikel> listArtikel = new ArrayList<>();
+    public BaseResponse<List<ArtikelPayload>> getDataPemberiDonorByEmail(@RequestParam String email){
+        List<ArtikelPayload> listArtikel = new ArrayList<>();
         try{
             listArtikel = artikelService.getSavedArtikel(email);
         }
         catch (Exception e){
             System.out.println(e);
-            return null;
+            return new BaseResponse<>(400,"Artikel not found",null);
         }
-        return listArtikel;
+        return new BaseResponse<>(200,"Success",listArtikel);
     }
 
     @GetMapping("/getAllArtikel")
-    public List<Artikel> getAllArtikel(){
-        List<Artikel> listArtikel = new ArrayList<>();
+    public BaseResponse<List<ArtikelPayload>> getAllArtikel(@RequestParam String email){
+        List<ArtikelPayload> listArtikel = new ArrayList<>();
         try{
-            listArtikel = artikelService.getAllArtikel();
+            listArtikel = artikelService.getAllArtikel(email);
         }
         catch (Exception e){
             System.out.println(e);
-            return null;
+            return new BaseResponse<>(400,"Artikel not found",null);
         }
-        return listArtikel;
+        return new BaseResponse<>(200,"Success",listArtikel);
     }
 
     @GetMapping("/getArtikelById")
-    public Artikel getArtikelById(@RequestParam String idArtikel) throws InterruptedException, ExecutionException {
-        return artikelService.getArtikelById(idArtikel);
+    public BaseResponse<ArtikelPayload> getArtikelById(@RequestParam String idArtikel,@RequestParam String email) throws InterruptedException, ExecutionException {
+        ArtikelPayload artikelPayload = artikelService.getArtikelByIdForFrontEnd(idArtikel,email);
+        if(artikelPayload == null){
+            return new BaseResponse<>(400,"Artikel not found",null);
+        }
+        return new BaseResponse<>(200,"Success",artikelPayload);
+    }
+
+    @PostMapping("/postLikedArtikel")
+    public BaseResponse<ArtikelPayload> postLikedArtikel(@RequestBody ArtikelPayload artikelPayload, @RequestParam String email) throws InterruptedException, ExecutionException{
+        String message = artikelService.handleLikedArtikel(artikelPayload,email);
+        return new BaseResponse<>(200,message,artikelPayload);
+    }
+
+    @PostMapping("/postSavedArtikel")
+    public BaseResponse<ArtikelPayload> postSavedArtikel(@RequestBody ArtikelPayload artikelPayload, @RequestParam String email) throws InterruptedException, ExecutionException{
+        String message =  artikelService.handleSavedArtikel(artikelPayload,email);
+        return new BaseResponse<>(200,message,artikelPayload);
     }
 }
