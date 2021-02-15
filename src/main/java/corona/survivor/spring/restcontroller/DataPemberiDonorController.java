@@ -1,5 +1,6 @@
 package corona.survivor.spring.restcontroller;
 import corona.survivor.spring.model.DataPemberiDonor;
+import corona.survivor.spring.rest.BaseResponse;
 import corona.survivor.spring.service.DataPemberiDonorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -15,43 +16,50 @@ public class DataPemberiDonorController {
     DataPemberiDonorService dataPemberiDonorService;
 
     @PostMapping("/createDataPemberiDonor")
-    public DataPemberiDonor createDataPemberiDonor(@RequestBody DataPemberiDonor dataPemberiDonor) throws InterruptedException, ExecutionException {
-        return dataPemberiDonorService.saveDataPemberiDonor(dataPemberiDonor);
+    public BaseResponse<DataPemberiDonor> createDataPemberiDonor(@RequestBody DataPemberiDonor dataPemberiDonor) throws InterruptedException, ExecutionException {
+        DataPemberiDonor dataPemberiDonorCreated = dataPemberiDonorService.saveDataPemberiDonor(dataPemberiDonor);
+        return new BaseResponse<DataPemberiDonor>(200,"Success",dataPemberiDonor);
     }
 
     @GetMapping("/getDataPemberiDonorByEmail")
-    public List<DataPemberiDonor> getDataPemberiDonorByEmail(@RequestParam String email){
+    public BaseResponse<List<DataPemberiDonor>> getDataPemberiDonorByEmail(@RequestParam String email){
         List<DataPemberiDonor> listDataPemberiDonor = new ArrayList<>();
         try{
             listDataPemberiDonor = dataPemberiDonorService.getDataPemberiDonorByEmail(email);
         }
         catch (Exception e){
             System.out.println(e);
-            return null;
+            return new BaseResponse<List<DataPemberiDonor>>(400,"Error Not Found",listDataPemberiDonor);
         }
-        return listDataPemberiDonor;
+        return new BaseResponse<List<DataPemberiDonor>>(200,"Success",listDataPemberiDonor);
     }
 
     @GetMapping("/getAllDataPemberiDonor")
-    public List<DataPemberiDonor> getAllDataPemberiDonor(){
+    public BaseResponse<List<DataPemberiDonor>> getAllDataPemberiDonor(){
         List<DataPemberiDonor> listDataPemberiDonor = new ArrayList<>();
         try{
             listDataPemberiDonor = dataPemberiDonorService.getAllDataPemberiDonor();
         }
         catch (Exception e){
             System.out.println(e);
-            return null;
+            return new BaseResponse<List<DataPemberiDonor>>(400,"Error Not Found",listDataPemberiDonor);
         }
-        return listDataPemberiDonor;
+        return new BaseResponse<List<DataPemberiDonor>>(200,"Success",listDataPemberiDonor);
     }
 
     @GetMapping("/getDataPemberiDonor")
-    public DataPemberiDonor getDataPemberiDonor(@RequestParam String idDataPemberiDonor) throws InterruptedException, ExecutionException {
-        return dataPemberiDonorService.getDataPemberiDonorDetails(idDataPemberiDonor);
+    public BaseResponse<DataPemberiDonor> getDataPemberiDonor(@RequestParam String idDataPemberiDonor) throws InterruptedException, ExecutionException {
+        DataPemberiDonor dataPemberiDonor = dataPemberiDonorService.getDataPemberiDonorDetails(idDataPemberiDonor);
+        if(dataPemberiDonor != null){
+            return new BaseResponse<DataPemberiDonor>(200,"Success",dataPemberiDonor);
+        }else {
+            return new BaseResponse<DataPemberiDonor>(400,"Error Not Found",null);
+        }
     }
 
     @DeleteMapping("/deleteDataPemberiDonor")
-    public String deleteDataPemberiDonor(@RequestParam String idDataPemberiDonor) {
-        return dataPemberiDonorService.deleteDataPemberiDonor(idDataPemberiDonor);
+    public BaseResponse<String> deleteDataPemberiDonor(@RequestParam String idDataPemberiDonor) {
+        String message = dataPemberiDonorService.deleteDataPemberiDonor(idDataPemberiDonor);
+        return new BaseResponse<String>(200,"Success","Data Pemberi Donor telah berhasil dihapus");
     }
 }

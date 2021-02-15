@@ -1,6 +1,7 @@
 package corona.survivor.spring.restcontroller;
 
 import corona.survivor.spring.model.DataPenerimaDonor;
+import corona.survivor.spring.rest.BaseResponse;
 import corona.survivor.spring.service.DataPenerimaDonorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -16,44 +17,51 @@ public class DataPenerimaDonorController {
     DataPenerimaDonorService dataPenerimaDonorService;
 
     @PostMapping("/createDataPenerimaDonor")
-    public DataPenerimaDonor createDataPenerimaDonor(@RequestBody DataPenerimaDonor dataPenerimaDonor) throws InterruptedException, ExecutionException {
-        return dataPenerimaDonorService.saveDataPendonor(dataPenerimaDonor);
+    public BaseResponse<DataPenerimaDonor> createDataPenerimaDonor(@RequestBody DataPenerimaDonor dataPenerimaDonor) throws InterruptedException, ExecutionException {
+        DataPenerimaDonor dataPenerimaDonorCreated = dataPenerimaDonorService.saveDataPendonor(dataPenerimaDonor);
+        return new BaseResponse<DataPenerimaDonor>(200,"Success",dataPenerimaDonor);
     }
 
     @GetMapping("/getDataPenerimaDonorByEmail")
-    public List<DataPenerimaDonor> getDataPenerimaDonorByEmail(@RequestParam String email){
+    public BaseResponse<List<DataPenerimaDonor>> getDataPenerimaDonorByEmail(@RequestParam String email){
         List<DataPenerimaDonor> listDataPenerimaDonor = new ArrayList<DataPenerimaDonor>();
         try{
             listDataPenerimaDonor = dataPenerimaDonorService.getDataPenerimaDonorByEmail(email);
         }
         catch (Exception e){
             System.out.println(e);
-            return null;
+            return new BaseResponse<List<DataPenerimaDonor>>(400,"Error Not Found",null);
         }
-        return listDataPenerimaDonor;
+        return new BaseResponse<List<DataPenerimaDonor>>(200,"Success",listDataPenerimaDonor);
     }
 
     @GetMapping("/getAllDataPenerimaDonor")
-    public List<DataPenerimaDonor> getAllDataPenerimaDonor(){
+    public BaseResponse<List<DataPenerimaDonor>> getAllDataPenerimaDonor(){
         List<DataPenerimaDonor> listDataPenerimaDonor = new ArrayList<DataPenerimaDonor>();
         try{
             listDataPenerimaDonor = dataPenerimaDonorService.getAllDataPenerimaDonor();
         }
         catch (Exception e){
             System.out.println(e);
-            return null;
+            return new BaseResponse<List<DataPenerimaDonor>>(400,"Error Not Found",null);
         }
-        return listDataPenerimaDonor;
+        return new BaseResponse<List<DataPenerimaDonor>>(200,"Success",listDataPenerimaDonor);
     }
 
     @GetMapping("/getDataPenerimaDonor")
-    public DataPenerimaDonor getDataPenerimaDonor(@RequestParam String idDataPenerimaDonor) throws InterruptedException, ExecutionException {
-        return dataPenerimaDonorService.getDataPenerimaDonorDetails(idDataPenerimaDonor);
+    public BaseResponse<DataPenerimaDonor> getDataPenerimaDonor(@RequestParam String idDataPenerimaDonor) throws InterruptedException, ExecutionException {
+        DataPenerimaDonor dataPenerimaDonor = dataPenerimaDonorService.getDataPenerimaDonorDetails(idDataPenerimaDonor);
+        if(dataPenerimaDonor == null){
+            return new BaseResponse<DataPenerimaDonor>(400,"Error Not Found",null);
+        }else {
+            return new BaseResponse<DataPenerimaDonor>(200,"Success",dataPenerimaDonor);
+        }
     }
 
     @DeleteMapping("/deleteDataPemberiDonort")
-    public String deleteDataPenerimaDonor(@RequestParam String idDataPenerimaDonor) {
-        return dataPenerimaDonorService.deleteDataPemberiDonor(idDataPenerimaDonor);
+    public BaseResponse<String>deleteDataPenerimaDonor(@RequestParam String idDataPenerimaDonor) {
+        String message = dataPenerimaDonorService.deleteDataPemberiDonor(idDataPenerimaDonor);
+        return new BaseResponse<String>(200,"Success","Data Penerima Donor telah berhasil dihapus");
     }
 
 }
