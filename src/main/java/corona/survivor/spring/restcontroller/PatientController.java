@@ -1,4 +1,4 @@
-package corona.survivor.spring.controller;
+package corona.survivor.spring.restcontroller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

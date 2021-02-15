@@ -7,6 +7,8 @@ import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
 import corona.survivor.spring.firebase.FirebaseInitialize;
 import corona.survivor.spring.model.Puskesmas;
+import corona.survivor.spring.model.Calendar;
+import corona.survivor.spring.model.Patient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +31,19 @@ public class PuskesmasService {
             puskesmasList.add(puskesmasTemp);
         }
         return puskesmasList;
+    }
+
+    public List<Calendar> getAllCalendar(String kodePuskesmas) throws InterruptedException, ExecutionException{
+        List<Calendar> calendarList = new ArrayList<Calendar>();
+        CollectionReference allCalendar = db.getFirebase().collection("Calendar");
+        ApiFuture<QuerySnapshot> querySnapshot = allCalendar.get();
+        for (DocumentSnapshot doc : querySnapshot.get().getDocuments()){
+            Calendar temp = doc.toObject(Calendar.class);
+            if (temp.getKodePuskesmas().equals(kodePuskesmas)){
+                calendarList.add(temp);
+            }
+        }
+        return calendarList;
     }
 
 }
