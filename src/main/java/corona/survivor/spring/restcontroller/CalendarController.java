@@ -15,7 +15,17 @@ public class CalendarController {
     CalendarService calendarService;
 
     @PostMapping("/createCalendar")
-    public Calendar createDataPemberiDonor(@RequestBody Calendar calendarModel) throws InterruptedException, ExecutionException {
+    public Calendar createDataCalendar(@RequestBody Calendar calendarModel) throws InterruptedException, ExecutionException {
         return calendarService.saveCalendar(calendarModel);
+    }
+
+    @GetMapping("/calculateSembuhAwal/{nomorCalendar}")
+    public String calculateSembuhAwalCalendar(@PathVariable String nomorCalendar){
+        try{
+            calendarService.calculateSembuhAwal(nomorCalendar);
+            return "Success";
+        }catch(Exception e){
+            return "Error";
+        }
     }
 }

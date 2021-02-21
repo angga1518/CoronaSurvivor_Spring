@@ -21,7 +21,7 @@
                 <!-- DataTales Example -->
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-danger">Daftar Calendar</h6>
+                        <h6 class="m-0 font-weight-bold text-danger">Tessssstttt</h6>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -38,7 +38,7 @@
                                     <th th:text="${p.emailPengguna}" class="font-weight-normal"></th>
 
                                     <th>
-                                        <a th:action="@{/viewCalendar/} + ${p.emailPengguna}" class="btn btn-danger">View</a>
+                                        <a th:href="@{/viewCalendar/} + ${p.emailPengguna}" class="btn btn-danger">View</a>
                                     </th>
                                 </tr>
                                 </tbody>
