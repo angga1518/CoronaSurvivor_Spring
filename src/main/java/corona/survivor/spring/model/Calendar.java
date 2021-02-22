@@ -34,13 +34,13 @@ public class Calendar {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private Date tanggalMunculGejala;
 
-    private int nextIndex;
+    private Date lastDate;
 
-    public int getNextIndex() {
-    	return this.nextIndex;
+    public Date getLastDate() {
+    	return this.lastDate;
     }
-    public void setNextIndex(int nextIndex) {
-    	this.nextIndex = nextIndex;
+    public void setLastDate(Date lastDate) {
+    	this.lastDate = lastDate;
     }
 
 

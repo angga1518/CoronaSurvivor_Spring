@@ -52,6 +52,7 @@ public class RecoveryService {
         ApiFuture<WriteResult> collectionsApiFuture = dbFirestore.collection(COL_NAME).document(uuid).set(recoveryModel);
 
         calendarModel.getListRecovery().add(recoveryModel.getNomorRecovery());
+        calendarModel.setLastDate(recoveryModel.getTanggalKalender());
 
         ApiFuture<WriteResult> collectionsApiFuture2 = dbFirestore.collection("Calendar").document(calendarModel.getNomorKalender()).set(calendarModel);
         return recoveryModel;

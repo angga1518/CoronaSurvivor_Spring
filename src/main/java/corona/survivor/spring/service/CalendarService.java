@@ -107,7 +107,7 @@ public class CalendarService {
                         break;
                     }
                 }
-                targetCalendar.setStartRed(targetCalendar.getTanggalPositif());
+                targetCalendar.setStartRed(targetCalendar.getTanggalMunculGejala());
                 targetCalendar.setRed(10);
                 targetCalendar.setYellow(3);
                 targetCalendar.setStatus(2);
@@ -115,8 +115,7 @@ public class CalendarService {
             }
         
             Date calendarDate = targetCalendar.getStartRed();
-            int dayIndex = calendarDate.getDay();
-            targetCalendar.setNextIndex(dayIndex);
+            targetCalendar.setAllGejalaAwalAdded(true);
 
         Firestore dbFirestore = FirestoreClient.getFirestore();
         ApiFuture<WriteResult> collectionsApiFuture = dbFirestore.collection(COL_NAME).document(targetCalendar.getNomorKalender()).set(targetCalendar);

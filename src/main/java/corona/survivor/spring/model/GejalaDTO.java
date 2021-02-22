@@ -3,6 +3,15 @@ package corona.survivor.spring.model;
 public class GejalaDTO {
     String uuid;
     String update;
+    String date;
+
+    public String getDate() {
+    	return this.date;
+    }
+    public void setDate(String date) {
+    	this.date = date;
+    }
+
 
     public String getUuid() {
     	return this.uuid;

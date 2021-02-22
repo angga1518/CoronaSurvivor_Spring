@@ -43,7 +43,8 @@ public class GejalaService {
         final String uuid = UUID.randomUUID().toString().replace("-", "");
         gejalaModel.setNomorGejala(uuid);
         Firestore dbFirestore = FirestoreClient.getFirestore();
-        ApiFuture<WriteResult> collectionsApiFuture = dbFirestore.collection(COL_NAME).document(uuid).set(gejalaModel);
+        ApiFuture<WriteResult> collectionsApiFuture;
+        collectionsApiFuture = dbFirestore.collection(COL_NAME).document(uuid).set(gejalaModel);
 
         Calendar calendarModel = calendarService.getCalendar(gejalaModel.getNomorKalender());
         boolean checkGejala = checkGejala(gejalaModel.getNamaGejala(), calendarModel);
@@ -57,8 +58,10 @@ public class GejalaService {
                 calendarService.calculateSembuhDelay(calendarModel.getNomorKalender(), uuid);
             }
     
-            ApiFuture<WriteResult> collectionsApiFuture2 = dbFirestore.collection(COL_NAME).document(gejalaModel.getNomorGejala()).set(gejalaModel); 
-            ApiFuture<WriteResult> collectionsApiFuture3 = dbFirestore.collection("Calendar").document(gejalaModel.getNomorKalender()).set(calendarModel); 
+            collectionsApiFuture = dbFirestore.collection(COL_NAME).document(gejalaModel.getNomorGejala()).set(gejalaModel); 
+            collectionsApiFuture = dbFirestore.collection("Calendar").document(gejalaModel.getNomorKalender()).set(calendarModel); 
+            System.out.println("aaaa ditambahkan: " + gejalaModel.getNomorGejala());
+            
             return gejalaModel;
         }else{
             return null;
@@ -99,11 +102,12 @@ public class GejalaService {
     public String updateGejalaFromRecovery(List<GejalaDTO> listUpdate) throws InterruptedException, ExecutionException{
         try{
             Firestore dbFirestore = FirestoreClient.getFirestore();
+            ApiFuture<WriteResult> collectionsApiFuture;
             for(GejalaDTO temp : listUpdate){
                 Gejala targetGejala = getGejala(temp.getUuid());
-                targetGejala.getSequenceDate().add(new Date().toString());
+                targetGejala.getSequenceDate().add(temp.getDate());
                 targetGejala.getSequenceUpdate().add(temp.getUpdate());
-                ApiFuture<WriteResult> collectionsApiFuture = dbFirestore.collection(COL_NAME).document(temp.getUuid()).set(targetGejala);
+                collectionsApiFuture = dbFirestore.collection(COL_NAME).document(temp.getUuid()).set(targetGejala);
             }
             return "Berhasil";
         }catch(Exception e){
