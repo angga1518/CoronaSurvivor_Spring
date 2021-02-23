@@ -125,6 +125,7 @@ public class KomentarService {
     }
 
     public String handleLikedKomentar(KomentarPayload komentarPayload, String email) throws InterruptedException,ExecutionException{
+        Komentar komentar = getKomentarById(komentarPayload.getIdKomentar());
         Pengguna pengguna = penggunaService.getPengguna(email);
         Firestore dbFirestore = FirestoreClient.getFirestore();
         if(pengguna.getListIdLikedKomentar() == null){
@@ -133,10 +134,14 @@ public class KomentarService {
         }
         if(komentarPayload.isLiked()){
             pengguna.getListIdLikedKomentar().add(komentarPayload.getIdKomentar());
+            komentar.setJumlahLike(komentar.getJumlahLike() + 1);
+            dbFirestore.collection("Komentar").document(komentar.getIdKomentar()).set(komentar);
             dbFirestore.collection("Pengguna").document(pengguna.getEmail()).set(pengguna);
             return "komentar berhasil dilike";
         }else {
             pengguna.getListIdLikedKomentar().remove(komentarPayload.getIdKomentar());
+            komentar.setJumlahLike(komentar.getJumlahLike() - 1);
+            dbFirestore.collection("Komentar").document(komentar.getIdKomentar()).set(komentar);
             dbFirestore.collection("Pengguna").document(pengguna.getEmail()).set(pengguna);
             return "Artikel berhasil diunlike";
         }

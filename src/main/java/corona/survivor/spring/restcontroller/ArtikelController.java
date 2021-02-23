@@ -17,7 +17,7 @@ public class ArtikelController {
     ArtikelService artikelService;
 
     @GetMapping("/getSavedArtikel")
-    public BaseResponse<List<ArtikelPayload>> getDataPemberiDonorByEmail(@RequestParam String email){
+    public BaseResponse<List<ArtikelPayload>> getSavedArtikel(@RequestParam String email){
         List<ArtikelPayload> listArtikel = new ArrayList<>();
         try{
             listArtikel = artikelService.getSavedArtikel(email);
