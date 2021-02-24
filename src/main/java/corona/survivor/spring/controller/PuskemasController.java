@@ -23,18 +23,18 @@ public class PuskemasController {
     @Autowired
     PuskesmasService puskesmasService;
 
-    @GetMapping("/")
-    public String getAllPuskesmas(Model model){
-        try{
-            List<Puskesmas> puskesmasList = puskesmasService.getAllPuskesmas();
-            model.addAttribute("listPuskesmas",puskesmasList);
-            return "list-puskesmas";
-        }catch (Exception e){
-            return null;
-        }
-    }
+    // @GetMapping("/")
+    // public String getAllPuskesmas(Model model){
+    //     try{
+    //         List<Puskesmas> puskesmasList = puskesmasService.getAllPuskesmas();
+    //         model.addAttribute("listPuskesmas",puskesmasList);
+    //         return "list-puskesmas";
+    //     }catch (Exception e){
+    //         return null;
+    //     }
+    // }
 
-    @GetMapping("/searchPuskesmas")
+    @GetMapping("/")
     public String searchPuskesmas(Model model){
         return "search-puskesmas";
     }
@@ -43,14 +43,18 @@ public class PuskemasController {
     @PostMapping("/allCalendars")
     public String allPatients(@RequestParam String kodePuskesmas, Model model){
         try{
-            System.out.println("AAA" + kodePuskesmas);
             List<Calendar> listCalendar = puskesmasService.getAllCalendar(kodePuskesmas);
             System.out.println("AAA" + listCalendar.get(0).getEmailPengguna());
-            model.addAttribute("listCalendar, listCalendar");
+            model.addAttribute("listCalendar", listCalendar);
             return "all-calendars";
         }catch(Exception e){
             return null;
         }
+    }
+    
+    @GetMapping("/viewCalendar/{email}")
+    public String viewCalendar(@PathVariable String email, Model model){
+        return "calendar";
     }
 
 
