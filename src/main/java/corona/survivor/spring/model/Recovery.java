@@ -8,29 +8,69 @@ import org.springframework.stereotype.Component;
 @Component()
 public class Recovery {
 
-    private int nomorRecovery;
+    private String nomorRecovery;
     private String catatanTambahan;
     private String feedback;
-
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private Date tanggalKalender;
-
     private String nomorKalender;
+    private int status;
+    //0 belum diisi
+    //1 tidak terkoneksi ke puskesmas
+    //2 terkoneksi, menunggu balasan
+    //3 terkoneksi, sudah dibalas
+    private double suhuTubuh;
+    private int saturasi;
+    private String emailPengguna;
+
+
+    public double getSuhuTubuh() {
+    	return this.suhuTubuh;
+    }
+    public void setSuhuTubuh(double suhuTubuh) {
+    	this.suhuTubuh = suhuTubuh;
+    }
+
+    public int getSaturasi() {
+    	return this.saturasi;
+    }
+    public void setSaturasi(int saturasi) {
+    	this.saturasi = saturasi;
+    }
+
+    public String getEmailPengguna() {
+    	return this.emailPengguna;
+    }
+    public void setEmailPengguna(String emailPengguna) {
+    	this.emailPengguna = emailPengguna;
+    }
+
+    public int getStatus() {
+    	return this.status;
+    }
+    public void setStatus(int status) {
+    	this.status = status;
+    }
 
     public Recovery(){
         super();
     }
 
-    public Recovery(int nomorRecovery, String catatanTambahan, String feedback){
+    public Recovery(String nomorRecovery, String catatanTambahan, String feedback, Date tanggalKalender, String nomorKalender, double suhuTubuh, int saturasi, String emailPengguna){
         this.nomorRecovery = nomorRecovery;
         this.catatanTambahan = catatanTambahan;
         this.feedback = feedback;
+        this.tanggalKalender = tanggalKalender;
+        this.nomorKalender = nomorKalender;
+        this.suhuTubuh = suhuTubuh;
+        this.saturasi = saturasi;
+        this.emailPengguna = emailPengguna;
     }
 
-    public int getNomorRecovery() {
+    public String getNomorRecovery() {
     	return this.nomorRecovery;
     }
-    public void setNomorRecovery(int nomorRecovery) {
+    public void setNomorRecovery(String nomorRecovery) {
     	this.nomorRecovery = nomorRecovery;
     }
 
