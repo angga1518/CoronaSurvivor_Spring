@@ -9,6 +9,8 @@ import corona.survivor.spring.model.ListDTO;
 import corona.survivor.spring.service.CalendarService;
 import corona.survivor.spring.service.RecoveryService;
 import corona.survivor.spring.service.GejalaService;
+import corona.survivor.spring.service.PuskesmasService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.unit.DataSize;
 import org.springframework.web.bind.annotation.*;
@@ -39,6 +41,9 @@ public class CalendarController {
 
     @Autowired
     CalendarService calendarService;
+
+    @Autowired
+    PuskesmasService puskesmasService;
 
     @Autowired
     RecoveryService recoveryService;
@@ -98,12 +103,16 @@ public class CalendarController {
     public String connectCalendarPuskesmas(@PathVariable String nomorCalendar, @PathVariable String nomorPuskesmas) {
         try {
             Calendar targetCalendar = calendarService.getCalendar(nomorCalendar);
-            targetCalendar.setKodePuskesmas(nomorPuskesmas);
-            Firestore dbFirestore = FirestoreClient.getFirestore();
-            ApiFuture<WriteResult> collectionsApiFuture2 = dbFirestore.collection("Calendar")
-                    .document(targetCalendar.getNomorKalender()).set(targetCalendar);
-
-            return "Success";
+            Boolean kodeValid = puskesmasService.validateKodePuskesmas(nomorPuskesmas);
+            if (kodeValid) {
+                targetCalendar.setKodePuskesmas(nomorPuskesmas);
+                Firestore dbFirestore = FirestoreClient.getFirestore();
+                ApiFuture<WriteResult> collectionsApiFuture2 = dbFirestore.collection("Calendar")
+                        .document(targetCalendar.getNomorKalender()).set(targetCalendar);
+                return "Success";
+            } else {
+                return "Error";
+            }
         } catch (Exception e) {
             return "Error";
         }
