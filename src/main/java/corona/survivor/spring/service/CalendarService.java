@@ -24,7 +24,7 @@ import corona.survivor.spring.firebase.FirebaseInitialize;
 @Service
 public class CalendarService {
 
-    public static final String COL_NAME="Calendar";
+    public static final String COL_NAME = "Calendar";
 
     @Autowired
     FirebaseInitialize db;
@@ -36,74 +36,82 @@ public class CalendarService {
         final String uuid = UUID.randomUUID().toString().replace("-", "");
         calendarModel.setNomorKalender(uuid);
         Firestore dbFirestore = FirestoreClient.getFirestore();
-        ApiFuture<WriteResult> collectionsApiFuture = dbFirestore.collection(COL_NAME).document(uuid).set(calendarModel);
+        ApiFuture<WriteResult> collectionsApiFuture = dbFirestore.collection(COL_NAME).document(uuid)
+                .set(calendarModel);
         return calendarModel;
     }
 
-    public Calendar getCalendar(String uuid) throws InterruptedException, ExecutionException{
-        try{    
-        CollectionReference allCalendar = db.getFirebase().collection("Calendar");
-        ApiFuture<QuerySnapshot> querySnapshot = allCalendar.get();
-        
-        for (DocumentSnapshot doc : querySnapshot.get().getDocuments()){
-            Calendar temp = doc.toObject(Calendar.class);
-            String t1 = temp.getNomorKalender().strip();
-            String t2 = uuid.strip();
-            System.out.println("aaaa t1 " + t1);
-            System.out.println("aaaa t2 " + t2);
-            System.out.println("aaaa t1 " + t1.length());
-            System.out.println("aaaa t2 " + t2.length());
-            System.out.println("aaaa t1 == t2 " + t1.compareTo(t2));
-            if (t1.equals(t2)){
-                return temp;
+    public Calendar getCalendar(String uuid) throws InterruptedException, ExecutionException {
+        try {
+            CollectionReference allCalendar = db.getFirebase().collection("Calendar");
+            ApiFuture<QuerySnapshot> querySnapshot = allCalendar.get();
+
+            for (DocumentSnapshot doc : querySnapshot.get().getDocuments()) {
+                Calendar temp = doc.toObject(Calendar.class);
+                String t1 = temp.getNomorKalender().strip();
+                String t2 = uuid.strip();
+                if (t1.equals(t2)) {
+                    return temp;
+                }
             }
-        }
-        System.out.println("aaaa " + "ooopss");
-        return null;
-        }catch(Exception e){
-            System.out.println("aaaa " + "ooopss2");
+            return null;
+        } catch (Exception e) {
             return null;
         }
     }
 
-    public List<Gejala> getAllGejala(String uuidCalendar) throws InterruptedException, ExecutionException{
-        try{
+    public Calendar getCalendarByEmailPengguna(String emailPengguna) throws InterruptedException, ExecutionException {
+        try {
+            CollectionReference allCalendar = db.getFirebase().collection("Calendar");
+            ApiFuture<QuerySnapshot> querySnapshot = allCalendar.get();
+
+            for (DocumentSnapshot doc : querySnapshot.get().getDocuments()) {
+                Calendar temp = doc.toObject(Calendar.class);
+                String emailPenggunaTemp = temp.getEmailPengguna();
+                if (emailPenggunaTemp.equals(emailPengguna)) {
+                    return temp;
+                }
+            }
+            return null;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public List<Gejala> getAllGejala(String uuidCalendar) throws InterruptedException, ExecutionException {
+        try {
             List<Gejala> listGejala = new ArrayList<Gejala>();
             Calendar targetCalendar = getCalendar(uuidCalendar);
-            for(String nomorGejala : targetCalendar.getListGejala()){
+            for (String nomorGejala : targetCalendar.getListGejala()) {
                 Gejala temp = gejalaService.getGejala(nomorGejala);
-                if (temp != null){
+                if (temp != null) {
                     listGejala.add(temp);
                 }
             }
-        return listGejala;
-        }catch(Exception e){
+            return listGejala;
+        } catch (Exception e) {
             return null;
         }
 
     }
 
-    public void calculateSembuhAwal(String uuidCalendar) throws InterruptedException, ExecutionException{
-        try{
-            System.out.println("aaaa" + "masukk");
-            System.out.println("aaaa" + uuidCalendar);
+    public void calculateSembuhAwal(String uuidCalendar) throws InterruptedException, ExecutionException {
+        try {
             Calendar targetCalendar = getCalendar(uuidCalendar);
-            
-            if (targetCalendar.getListGejala().size() == 0){
-                System.out.println("aaaa" + 1);
+
+            if (targetCalendar.getListGejala().size() == 0) {
                 targetCalendar.setStartRed(targetCalendar.getTanggalPositif());
                 targetCalendar.setRed(10);
                 targetCalendar.setYellow(0);
                 targetCalendar.setStatus(1);
-            }else{
+            } else {
                 List<Gejala> listGejala = getAllGejala(uuidCalendar);
-                for(Gejala gejala : listGejala){
-                    if(gejala.getNamaGejala().contains("sesak") || gejala.getNamaGejala().contains("Sesak")){
+                for (Gejala gejala : listGejala) {
+                    if (gejala.getNamaGejala().contains("sesak") || gejala.getNamaGejala().contains("Sesak")) {
                         targetCalendar.setStartRed(targetCalendar.getTanggalMunculGejala());
                         targetCalendar.setRed(20);
                         targetCalendar.setYellow(3);
                         targetCalendar.setStatus(3);
-                        System.out.println("aaaa" + 3);
                         break;
                     }
                 }
@@ -111,53 +119,61 @@ public class CalendarService {
                 targetCalendar.setRed(10);
                 targetCalendar.setYellow(3);
                 targetCalendar.setStatus(2);
-                System.out.println("aaaa" + 2);
             }
-        
+
             Date calendarDate = targetCalendar.getStartRed();
             targetCalendar.setAllGejalaAwalAdded(true);
 
-        Firestore dbFirestore = FirestoreClient.getFirestore();
-        ApiFuture<WriteResult> collectionsApiFuture = dbFirestore.collection(COL_NAME).document(targetCalendar.getNomorKalender()).set(targetCalendar);
-        }catch(Exception e){
+            Firestore dbFirestore = FirestoreClient.getFirestore();
+            ApiFuture<WriteResult> collectionsApiFuture = dbFirestore.collection(COL_NAME)
+                    .document(targetCalendar.getNomorKalender()).set(targetCalendar);
+
+            
+        } catch (Exception e) {
             System.out.println("aaa " + e);
         }
 
     }
 
-    public void calculateSembuhDelay(String nomorKalender, String nomorGejala) throws InterruptedException, ExecutionException{
-        try{
+    public void calculateSembuhDelay(String nomorKalender, String nomorGejala)
+            throws InterruptedException, ExecutionException {
+        try {
             Calendar targetCalendar = getCalendar(nomorKalender);
             Gejala targetGejala = gejalaService.getGejala(nomorGejala);
 
-            if(targetGejala.getNamaGejala().toLowerCase().contains("demam") || targetGejala.getNamaGejala().toLowerCase().contains("panas")){
+            if (targetGejala.getNamaGejala().toLowerCase().contains("demam")
+                    || targetGejala.getNamaGejala().toLowerCase().contains("panas")) {
                 targetCalendar.setIsDelayed(true);
-                targetCalendar.setRed(targetCalendar.getRed()+10);
+                targetCalendar.setRed(targetCalendar.getRed() + 10);
                 targetCalendar.setYellow(3);
                 targetCalendar.setStatus(2);
             }
 
-            if(targetGejala.getNamaGejala().toLowerCase().contains("sesak") || targetGejala.getNamaGejala().toLowerCase().contains("sesek")){
+            if (targetGejala.getNamaGejala().toLowerCase().contains("sesak")
+                    || targetGejala.getNamaGejala().toLowerCase().contains("sesek")) {
                 targetCalendar.setIsDelayed(true);
-                targetCalendar.setRed(targetCalendar.getRed()+20);
+                targetCalendar.setRed(targetCalendar.getRed() + 20);
                 targetCalendar.setYellow(3);
                 targetCalendar.setStatus(3);
             }
 
             Firestore dbFirestore = FirestoreClient.getFirestore();
-            ApiFuture<WriteResult> collectionsApiFuture = dbFirestore.collection(COL_NAME).document(targetCalendar.getNomorKalender()).set(targetCalendar);
-        }catch(Exception e){
+            ApiFuture<WriteResult> collectionsApiFuture = dbFirestore.collection(COL_NAME)
+                    .document(targetCalendar.getNomorKalender()).set(targetCalendar);
+        } catch (Exception e) {
 
         }
     }
 
-    public void addPuskesmas(String kodePuskesmas, String nomorKalender) throws InterruptedException, ExecutionException{
-        try{
+    public void addPuskesmas(String kodePuskesmas, String nomorKalender)
+            throws InterruptedException, ExecutionException {
+        try {
             Calendar targetCalendar = getCalendar(nomorKalender);
             targetCalendar.setKodePuskesmas(kodePuskesmas);
             Firestore dbFirestore = FirestoreClient.getFirestore();
-            ApiFuture<WriteResult> collectionsApiFuture = dbFirestore.collection(COL_NAME).document(targetCalendar.getNomorKalender()).set(targetCalendar);
-        }catch(Exception e){
+            ApiFuture<WriteResult> collectionsApiFuture = dbFirestore.collection(COL_NAME)
+                    .document(targetCalendar.getNomorKalender()).set(targetCalendar);
+        } catch (Exception e) {
 
         }
 

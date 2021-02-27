@@ -60,7 +60,6 @@ public class GejalaService {
     
             collectionsApiFuture = dbFirestore.collection(COL_NAME).document(gejalaModel.getNomorGejala()).set(gejalaModel); 
             collectionsApiFuture = dbFirestore.collection("Calendar").document(gejalaModel.getNomorKalender()).set(calendarModel); 
-            System.out.println("aaaa ditambahkan: " + gejalaModel.getNomorGejala());
             
             return gejalaModel;
         }else{

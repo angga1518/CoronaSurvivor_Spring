@@ -14,6 +14,7 @@ public class Calendar {
     private String kodePuskesmas;
     private String emailPengguna;
     private List<String> listGejala = new ArrayList<String>();
+    private List<String> listRiwayat = new ArrayList<String>();
     private String nik;
     private int beratBadan;
     private int red;
@@ -135,6 +136,13 @@ public class Calendar {
     }
     public void setListGejala(List<String> listGejala) {
         this.listGejala = listGejala;
+    }
+
+    public List<String> getListRiwayat() {
+        return this.listRiwayat;
+    }
+    public void setListRiwayat(List<String> listRiwayat) {
+        this.listRiwayat = listRiwayat;
     }
 
 
