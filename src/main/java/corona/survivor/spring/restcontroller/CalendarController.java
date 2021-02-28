@@ -23,8 +23,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.CollectionReference;
@@ -100,6 +102,7 @@ public class CalendarController {
             response.put("red", targetCalendar.getRed());
             response.put("yellow", targetCalendar.getYellow());
             response.put("lastDate", targetCalendar.getLastDate());
+            response.put("status", targetCalendar.getStatus());
             return response;
         } catch (Exception e) {
             return null;
@@ -108,20 +111,22 @@ public class CalendarController {
     }
 
     @GetMapping("connect/{nomorCalendar}/{nomorPuskesmas}")
-    public String connectCalendarPuskesmas(@PathVariable String nomorCalendar, @PathVariable String nomorPuskesmas) {
-        try {
+    public String connectCalendarPuskesmas (@PathVariable String nomorCalendar, @PathVariable String nomorPuskesmas){
+        try{
+            ApiFuture<WriteResult> collectionsApiFuture;
+            Firestore dbFirestore = FirestoreClient.getFirestore();
             Calendar targetCalendar = calendarService.getCalendar(nomorCalendar);
-            Boolean kodeValid = puskesmasService.validateKodePuskesmas(nomorPuskesmas);
-            if (kodeValid) {
-                targetCalendar.setKodePuskesmas(nomorPuskesmas);
-                Firestore dbFirestore = FirestoreClient.getFirestore();
-                ApiFuture<WriteResult> collectionsApiFuture2 = dbFirestore.collection("Calendar")
-                        .document(targetCalendar.getNomorKalender()).set(targetCalendar);
-                return "Success";
-            } else {
-                return "Error";
+            targetCalendar.setKodePuskesmas(nomorPuskesmas);
+            List<String> listRecovery = targetCalendar.getListRecovery();
+            for(String idRecov : listRecovery){
+                Recovery recovery  = recoveryService.getRecovery(idRecov);
+                recovery.setStatus(2);
+                collectionsApiFuture = dbFirestore.collection("Recovery").document(recovery.getNomorRecovery()).set(recovery);
             }
-        } catch (Exception e) {
+            collectionsApiFuture = dbFirestore.collection("Calendar").document(targetCalendar.getNomorKalender()).set(targetCalendar);
+
+            return "Success";
+        }catch(Exception e){
             return "Error";
         }
     }

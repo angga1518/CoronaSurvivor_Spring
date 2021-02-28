@@ -1,8 +1,8 @@
 package corona.survivor.spring.model;
 
-import org.springframework.format.annotation.DateTimeFormat;
+// import org.springframework.format.annotation.StringTimeFormat;
 import org.springframework.stereotype.Component;
-import java.util.Date;
+// import java.util.String;
 import java.util.List;
 
 @Component()
@@ -15,24 +15,24 @@ public class DataPenerimaDonor {
     private String golonganDarah;
     private String domisili;
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    private Date tanggalLahir;
+    // @StringTimeFormat(iso = StringTimeFormat.ISO.String)
+    private String tanggalLahir;
 
     private String email;
     private String noTelepon;
     private String rhesus;
     private boolean isHimself;
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    private Date tanggalSimpan;
+    // @StringTimeFormat(iso = StringTimeFormat.ISO.String)
+    private String tanggalSimpan;
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    private Date tanggalPositif;
+    // @StringTimeFormat(iso = StringTimeFormat.ISO.String)
+    private String tanggalPositif;
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    private Date tanggalGejala;
+    // @StringTimeFormat(iso = StringTimeFormat.ISO.String)
+    private String tanggalGejala;
 
-    private int beratBadan;
+    private String beratBadan;
 
     private List<String> riwayatPenyakit;
     private List<String> gejala;
@@ -45,7 +45,7 @@ public class DataPenerimaDonor {
         super();
     }
 
-    public DataPenerimaDonor(String idDataPenerimaDonor, String namaLengkap, String jenisKelamin, String NIK, String golonganDarah, String domisili, Date tanggalLahir, String email, String noTelepon, String rhesus, boolean isHimself, Date tanggalSimpan, Date tanggalPositif, Date tanggalGejala, int beratBadan, List<String> riwayatPenyakit, List<String> gejala, String catatanTambahan, String emailPendaftar) {
+    public DataPenerimaDonor(String idDataPenerimaDonor, String namaLengkap, String jenisKelamin, String NIK, String golonganDarah, String domisili, String tanggalLahir, String email, String noTelepon, String rhesus, boolean isHimself, String tanggalSimpan, String tanggalPositif, String tanggalGejala, String beratBadan, List<String> riwayatPenyakit, List<String> gejala, String catatanTambahan, String emailPendaftar) {
         this.idDataPenerimaDonor = idDataPenerimaDonor;
         this.namaLengkap = namaLengkap;
         this.jenisKelamin = jenisKelamin;
@@ -115,11 +115,11 @@ public class DataPenerimaDonor {
         this.domisili = domisili;
     }
 
-    public Date getTanggalLahir() {
+    public String getTanggalLahir() {
         return tanggalLahir;
     }
 
-    public void setTanggalLahir(Date tanggalLahir) {
+    public void setTanggalLahir(String tanggalLahir) {
         this.tanggalLahir = tanggalLahir;
     }
 
@@ -155,35 +155,35 @@ public class DataPenerimaDonor {
         isHimself = himself;
     }
 
-    public Date getTanggalSimpan() {
+    public String getTanggalSimpan() {
         return tanggalSimpan;
     }
 
-    public void setTanggalSimpan(Date tanggalSimpan) {
+    public void setTanggalSimpan(String tanggalSimpan) {
         this.tanggalSimpan = tanggalSimpan;
     }
 
-    public Date getTanggalPositif() {
+    public String getTanggalPositif() {
         return tanggalPositif;
     }
 
-    public void setTanggalPositif(Date tanggalPositif) {
+    public void setTanggalPositif(String tanggalPositif) {
         this.tanggalPositif = tanggalPositif;
     }
 
-    public Date getTanggalGejala() {
+    public String getTanggalGejala() {
         return tanggalGejala;
     }
 
-    public void setTanggalGejala(Date tanggalGejala) {
+    public void setTanggalGejala(String tanggalGejala) {
         this.tanggalGejala = tanggalGejala;
     }
 
-    public int getBeratBadan() {
+    public String getBeratBadan() {
         return beratBadan;
     }
 
-    public void setBeratBadan(int beratBadan) {
+    public void setBeratBadan(String beratBadan) {
         this.beratBadan = beratBadan;
     }
 

@@ -19,6 +19,8 @@ public class DataPenerimaDonorController {
     @PostMapping("/createDataPenerimaDonor")
     public BaseResponse<DataPenerimaDonor> createDataPenerimaDonor(@RequestBody DataPenerimaDonor dataPenerimaDonor) throws InterruptedException, ExecutionException {
         DataPenerimaDonor dataPenerimaDonorCreated = dataPenerimaDonorService.saveDataPendonor(dataPenerimaDonor);
+        System.out.println(dataPenerimaDonorCreated.getTanggalPositif());
+        System.out.println(dataPenerimaDonorCreated.getTanggalSimpan());
         return new BaseResponse<DataPenerimaDonor>(200,"Success",dataPenerimaDonor);
     }
 

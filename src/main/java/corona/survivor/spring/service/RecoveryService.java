@@ -47,6 +47,8 @@ public class RecoveryService {
         //Set statusnya duluu
         if (calendarModel.getKodePuskesmas() != null){
             recoveryModel.setStatus(2);
+        }else{
+            recoveryModel.setStatus(1);
         }
 
         ApiFuture<WriteResult> collectionsApiFuture = dbFirestore.collection(COL_NAME).document(uuid).set(recoveryModel);
@@ -61,6 +63,7 @@ public class RecoveryService {
     public Recovery getRecovery(String uuid) throws InterruptedException, ExecutionException{
         try{    
             CollectionReference allRecovery = db.getFirebase().collection("Recovery");
+            System.out.println("debug: " + "masuk");
             ApiFuture<QuerySnapshot> querySnapshot = allRecovery.get();
         for (DocumentSnapshot doc : querySnapshot.get().getDocuments()){
             Recovery temp = doc.toObject(Recovery.class);
