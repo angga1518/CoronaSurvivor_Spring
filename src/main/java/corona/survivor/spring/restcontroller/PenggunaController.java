@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import corona.survivor.spring.model.Pengguna;
 import corona.survivor.spring.service.PenggunaService;
 
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 @RestController
@@ -19,6 +20,12 @@ public class PenggunaController {
     @PostMapping("/create")
     public BaseResponse<Pengguna> createPengguna(@RequestBody Pengguna pengguna) throws InterruptedException, ExecutionException {
         Pengguna penggunaCreated =  penggunaService.createPengguna(pengguna);
+        return new BaseResponse<Pengguna>(200,"Success",penggunaCreated);
+    }
+
+    @PostMapping("/setToken")
+    public BaseResponse<Pengguna> setTokenPengguna(@RequestBody Map<String,String> mapToken) throws InterruptedException, ExecutionException {
+        Pengguna penggunaCreated =  penggunaService.setTokenPengguna(mapToken);
         return new BaseResponse<Pengguna>(200,"Success",penggunaCreated);
     }
 

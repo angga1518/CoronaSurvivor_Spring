@@ -25,32 +25,6 @@ public class FCMService {
         logger.info("Sent message with data. Topic: " + request.getTopic() + ", " + response + " msg " + jsonOutput);
     }
 
-    public void sendMessageCustomDataWithTopic(Map<String, String> data, PushNotificationRequest request)
-            throws InterruptedException, ExecutionException {
-        Message message = getPreconfiguredMessageWithDataCustomWithTopic(data, request);
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        String jsonOutput = gson.toJson(message);
-        String response = sendAndGetResponse(message);
-        logger.info("Sent message with data. Topic: " + data.get("topic") + ", " + response + " msg " + jsonOutput);
-    }
-
-    public void sendMessageWithoutData(PushNotificationRequest request)
-            throws InterruptedException, ExecutionException {
-        Message message = getPreconfiguredMessageWithoutData(request);
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        String jsonOutput = gson.toJson(message);
-        String response = sendAndGetResponse(message);
-        logger.info("Sent message without data. Topic: " + request.getTopic() + ", " + response + " msg " + jsonOutput);
-    }
-
-    public void sendMessageToToken(PushNotificationRequest request) throws InterruptedException, ExecutionException {
-        Message message = getPreconfiguredMessageToToken(request);
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        String jsonOutput = gson.toJson(message);
-        String response = sendAndGetResponse(message);
-        logger.info(
-                "Sent message to token. Device token: " + request.getToken() + ", " + response + " msg " + jsonOutput);
-    }
 
     private String sendAndGetResponse(Message message) throws InterruptedException, ExecutionException {
         return FirebaseMessaging.getInstance().sendAsync(message).get();
@@ -68,13 +42,6 @@ public class FCMService {
         return ApnsConfig.builder().setAps(Aps.builder().setCategory(topic).setThreadId(topic).build()).build();
     }
 
-    private Message getPreconfiguredMessageToToken(PushNotificationRequest request) {
-        return getPreconfiguredMessageBuilder(request).setToken(request.getToken()).build();
-    }
-
-    private Message getPreconfiguredMessageWithoutData(PushNotificationRequest request) {
-        return getPreconfiguredMessageBuilder(request).setTopic(request.getTopic()).build();
-    }
 
     private Message getPreconfiguredMessageWithData(Map<String, String> data, PushNotificationRequest request) {
         return getPreconfiguredMessageBuilder(request).putAllData(data).setToken(request.getToken()).build();
@@ -85,19 +52,5 @@ public class FCMService {
         ApnsConfig apnsConfig = getApnsConfig(request.getTopic());
         return Message.builder().setApnsConfig(apnsConfig).setAndroidConfig(androidConfig)
                 .setNotification(new Notification(request.getTitle(), request.getMessage()));
-    }
-
-    private Message getPreconfiguredMessageWithDataCustomWithTopic(Map<String, String> data,
-            PushNotificationRequest request) {
-        return getPreconfiguredMessageBuilderCustomDataWithTopic(data, request).putAllData(data)
-                .setTopic(request.getTopic()).build();
-    }
-
-    private Message.Builder getPreconfiguredMessageBuilderCustomDataWithTopic(Map<String, String> data,
-            PushNotificationRequest request) {
-        AndroidConfig androidConfig = getAndroidConfig(request.getTopic());
-        ApnsConfig apnsConfig = getApnsConfig(data.get(request.getTopic()));
-        return Message.builder().setApnsConfig(apnsConfig).setAndroidConfig(androidConfig)
-                .setNotification(new Notification(data.get("title"), data.toString()));
     }
 }

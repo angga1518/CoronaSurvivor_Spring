@@ -2,7 +2,7 @@ package corona.survivor.spring.firebase;
 
 public enum NotificationParameter {
     SOUND("default"),
-    COLOR("#FFFF00");
+    COLOR("#FC312F");
 
     private String value;
 
