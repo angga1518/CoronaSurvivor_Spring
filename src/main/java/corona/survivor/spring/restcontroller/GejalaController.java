@@ -42,6 +42,7 @@ public class GejalaController {
         response.put("red", targetCalendar.getRed());
         response.put("yellow", targetCalendar.getYellow());
         response.put("lastDate", targetCalendar.getLastDate());
+        response.put("status", targetCalendar.getStatus());
         return response;
     }
 
