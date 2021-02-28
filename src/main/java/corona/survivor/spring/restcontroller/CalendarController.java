@@ -73,9 +73,14 @@ public class CalendarController {
     @GetMapping("/getCalendar/{emailPengguna}")
     public BaseResponse<Calendar> getCalendarByEmailPengguna(@PathVariable String emailPengguna) {
         try {
+            List<String> listNamaGejala = new ArrayList<String>();
             Calendar calendar = calendarService.getCalendarByEmailPengguna(emailPengguna);
             if (calendar == null) {
                 return new BaseResponse<Calendar>(400, "Error Not Found", null);
+            }
+            if(calendar.getListGejala().size()!=calendar.getListNamaGejala().size()){
+                listNamaGejala = gejalaService.getNamaGejalaFromListUuid(calendar.getListGejala());
+                calendar.setListNamaGejala(listNamaGejala);
             }
             return new BaseResponse<Calendar>(200, "Success", calendar);
         } catch (Exception e) {
@@ -139,9 +144,11 @@ public class CalendarController {
             List<String> listNamaGejala = new ArrayList<String>();
             List<String> listUpdateGejala = new ArrayList<String>();
             List<String> listGejalaString = targetCalendar.getListGejala();
+            System.out.println(listGejalaString);
             for (String uuidGejala : listGejalaString) {
                 Gejala targetGejala = gejalaService.getGejala(uuidGejala);
                 listNamaGejala.add(targetGejala.getNamaGejala());
+                System.out.println(targetGejala.getSequenceUpdate());
                 listUpdateGejala.add(targetGejala.getSequenceUpdate().get(targetIndex));
             }
             response.put("recovery", targetRecovery);
@@ -150,6 +157,7 @@ public class CalendarController {
             return response;
 
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             return null;
         }
     }
