@@ -3,6 +3,7 @@ package corona.survivor.spring.model;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -18,10 +19,10 @@ public class Pengguna {
     private String jenisKelamin;
     private String domisili;
     private String noTelepon;
-    private List<String> listIdArtikelDisimpan;
 
-    private List<String> listIdLikedArtikel;
-    private List<String> listIdLikedKomentar;
+    private List<String> listIdArtikelDisimpan = new ArrayList<>();
+    private List<String> listIdLikedArtikel = new ArrayList<>() ;
+    private List<String> listIdLikedKomentar = new ArrayList<>();
 
     public Pengguna(){
         super();

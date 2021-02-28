@@ -2,6 +2,7 @@ package corona.survivor.spring.model;
 
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -16,7 +17,7 @@ public class Artikel {
     private Date tanggalPost;
     private int jumlahView;
     private int jumlahLike;
-    private List<String> listIdComment;
+    private List<String> listIdComment = new ArrayList<>();
     private String imageUrl;
 
     public Artikel(){

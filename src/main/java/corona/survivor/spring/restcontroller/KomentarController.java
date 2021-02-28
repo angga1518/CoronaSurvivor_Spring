@@ -3,6 +3,7 @@ package corona.survivor.spring.restcontroller;
 import corona.survivor.spring.model.Komentar;
 import corona.survivor.spring.rest.BaseResponse;
 import corona.survivor.spring.rest.KomentarPayload;
+import corona.survivor.spring.rest.ListKomentarPayload;
 import corona.survivor.spring.service.KomentarService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -45,8 +46,8 @@ public class KomentarController {
     }
 
     @PostMapping("/postLikedKomentar")
-    public BaseResponse<KomentarPayload> postLikedKomentar(@RequestBody KomentarPayload komentarPayload, @RequestParam String email) throws InterruptedException, ExecutionException{
-        String message = komentarService.handleLikedKomentar(komentarPayload,email);
-        return new BaseResponse<>(200,message,komentarPayload);
+    public BaseResponse<ListKomentarPayload> postLikedKomentar(@RequestBody ListKomentarPayload listKomentarPayload, @RequestParam String email) throws InterruptedException, ExecutionException{
+        String message = komentarService.handleLikedKomentar(listKomentarPayload,email);
+        return new BaseResponse<>(200,message,listKomentarPayload);
     }
 }
