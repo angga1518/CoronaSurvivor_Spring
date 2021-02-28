@@ -144,7 +144,7 @@ public class CalendarController {
             Calendar targetCalendar = calendarService.getCalendar(nomorCalendar);
             System.out.println("debug: " + "masuk method getrecovery");
             Date targetDate = new SimpleDateFormat("MM-dd-yyyy").parse(date);
-            System.out.println("debug: " + "masuk method getrecovery 2 " + targetDate.toString());
+            System.out.println("debug: " + "masuk method getrecovery 2" + targetDate.toString());
 
             Date input1 = targetCalendar.getStartRed();
             LocalDate date1 = input1.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();

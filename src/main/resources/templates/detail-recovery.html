@@ -21,29 +21,43 @@
                 <!-- DataTales Example -->
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-danger">Daftar Calendar</h6>
+                        <h6 th:text="${email}" class="m-0 font-weight-bold text-danger"></h6>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
+                            
+                            <label class="font-weight-bold">Saturasi : </label>
+                            <p th:text="${recovery.saturasi}"></p>
+
+                            <label class="font-weight-bold">Suhu Tubuh : </label>
+                            <p th:text="${recovery.suhuTubuh}"></p>
+
+                            <div th:if="${recovery.catatanTambahan != null}">
+                                <label class="font-weight-bold">Catatan Tambahan : </label>
+                                <p th:text="${recovery.catatanTambahan}"></p>
+                            </div>
+
                             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                 <thead>
-                                <tr>
-                                    <th>Email Pasien</th>
-                                    <th>Calendar</th>
-
+                                <tr th:each="p : ${listNamaGejala}">
+                                    <th th:text="${p}"></th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr th:each="p : ${listCalendar}">
-                                    <th th:text="${p.emailPengguna}" class="font-weight-normal"></th>
+                                <tr th:each="p : ${listUpdateGejala}">
+                                    <th th:text="${p}" class="font-weight-normal"></th>
 
-                                    <th>
-                                        <a th:href="@{/viewCalendar/} + ${p.emailPengguna}" class="btn btn-danger btn-sm">View</a>
-                                        <!-- <a th:action="@{/viewCalendar/} + ${p.emailPengguna}" class="btn btn-danger">View</a> -->
-                                    </th>
                                 </tr>
                                 </tbody>
                             </table>
+
+                            <div th:if="${recovery.status != 3 && recovery.feedback == null}">
+                                <a th:href="@{/addFeedback/} + ${recovery.nomorRecovery}" class="btn btn-danger btn-sm">Add Feedback</a>
+                            </div>
+
+
+
+
                         </div>
                     </div>
                 </div>
