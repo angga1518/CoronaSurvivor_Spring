@@ -35,7 +35,6 @@ public class DataPenerimaDonorService {
         CollectionReference dataPenerimaDonor = db.getFirebase().collection(COL_NAME);
         ApiFuture<QuerySnapshot> querySnapshot = dataPenerimaDonor.get();
         for (DocumentSnapshot doc : querySnapshot.get().getDocuments()) {
-//            System.out.println(doc.getId());
             DataPenerimaDonor dataPenerimaDonorTemp = doc.toObject(DataPenerimaDonor.class);
             if (dataPenerimaDonorTemp.getEmailPendaftar().equals(email)) {
                 listPenerimaDonor.add(dataPenerimaDonorTemp);
@@ -43,6 +42,7 @@ public class DataPenerimaDonorService {
         }
         return listPenerimaDonor;
     }
+
 
     public List<DataPenerimaDonor> getAllDataPenerimaDonor() throws InterruptedException, ExecutionException {
         List<DataPenerimaDonor> listPenerimaDonor = new ArrayList<DataPenerimaDonor>();
