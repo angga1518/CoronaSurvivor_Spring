@@ -16,6 +16,9 @@ import org.springframework.util.unit.DataSize;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -127,28 +130,39 @@ public class CalendarController {
         return (int) ((d2.getTime() - d1.getTime()) / (1000 * 60 * 60 * 24));
     }
 
-    // Date nya bentuknya mm-dd-yyyy
+    //Date nya bentuknya mm-dd-yyyy
     @GetMapping("getRecovery/{nomorCalendar}/{date}")
-    public Map<String, Object> getRecovery(@PathVariable String nomorCalendar, @PathVariable String date) {
-        try {
+    public Map<String, Object> getRecovery(@PathVariable String nomorCalendar, @PathVariable String date){
+        try{
             Map<String, Object> response = new HashMap<String, Object>();
 
             Calendar targetCalendar = calendarService.getCalendar(nomorCalendar);
+            System.out.println("debug: " + "masuk method getrecovery");
             Date targetDate = new SimpleDateFormat("MM-dd-yyyy").parse(date);
-            int targetIndex = daysBetween(targetCalendar.getStartRed(), targetDate);
-            if (targetIndex < 0)
-                targetIndex = 0;
+            System.out.println("debug: " + "masuk method getrecovery 2 " + targetDate.toString());
+
+            Date input1 = targetCalendar.getStartRed();
+            LocalDate date1 = input1.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+            Date input2 = targetDate;
+            LocalDate date2 = input1.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+            long diffInDays = ChronoUnit.DAYS.between(date1, date2);
+            
+            int targetIndex = (int) diffInDays;
+            // int targetIndex = daysBetween(targetCalendar.getStartRed(), targetDate);
+            if(targetIndex < 0) targetIndex = 0;
+
+            System.out.println("debug: " + "ERROR " + targetIndex);
             String targetRecoveryId = targetCalendar.getListRecovery().get(targetIndex);
             Recovery targetRecovery = recoveryService.getRecovery(targetRecoveryId);
 
             List<String> listNamaGejala = new ArrayList<String>();
             List<String> listUpdateGejala = new ArrayList<String>();
             List<String> listGejalaString = targetCalendar.getListGejala();
-            System.out.println(listGejalaString);
-            for (String uuidGejala : listGejalaString) {
+            for(String uuidGejala : listGejalaString){
                 Gejala targetGejala = gejalaService.getGejala(uuidGejala);
                 listNamaGejala.add(targetGejala.getNamaGejala());
-                System.out.println(targetGejala.getSequenceUpdate());
                 listUpdateGejala.add(targetGejala.getSequenceUpdate().get(targetIndex));
             }
             response.put("recovery", targetRecovery);
@@ -156,8 +170,7 @@ public class CalendarController {
             response.put("listUpdateGejala", listUpdateGejala);
             return response;
 
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+        }catch(Exception e){
             return null;
         }
     }

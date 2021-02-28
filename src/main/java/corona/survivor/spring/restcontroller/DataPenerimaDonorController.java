@@ -30,7 +30,7 @@ public class DataPenerimaDonorController {
         }
         catch (Exception e){
             System.out.println(e);
-            return new BaseResponse<List<DataPenerimaDonor>>(400,"Error Not Found",null);
+            return new BaseResponse<List<DataPenerimaDonor>>(400,"Error Not Found",listDataPenerimaDonor);
         }
         return new BaseResponse<List<DataPenerimaDonor>>(200,"Success",listDataPenerimaDonor);
     }
