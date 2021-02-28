@@ -7,7 +7,6 @@ import corona.survivor.spring.firebase.FirebaseInitialize;
 import corona.survivor.spring.model.Artikel;
 import corona.survivor.spring.model.Pengguna;
 import corona.survivor.spring.rest.ArtikelPayload;
-import corona.survivor.spring.rest.BaseResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -81,8 +80,7 @@ public class ArtikelService {
         DocumentSnapshot document = future.get();
 
         Artikel artikel = null;
-
-        if(document.exists()){
+        if(document.getId().equals(idArtikel)){
             artikel = document.toObject(Artikel.class);
             return artikel;
         }
@@ -95,8 +93,14 @@ public class ArtikelService {
         ArtikelPayload artikelPayload = new ArtikelPayload();
         if(pengguna.getListIdLikedArtikel() != null){
             List<String> listLikedArtikel = pengguna.getListIdLikedArtikel();
-            if(pengguna.getListIdLikedArtikel().contains(artikel.getIdArtikel())){
+            if(listLikedArtikel.contains(artikel.getIdArtikel())){
                 artikelPayload.setLiked(true);
+            }
+        }
+        if(pengguna.getListIdArtikelDisimpan() != null){
+            List<String> listSavedArtikel = pengguna.getListIdArtikelDisimpan();
+            if(listSavedArtikel.contains(artikel.getIdArtikel())){
+                artikelPayload.setSaved(true);
             }
         }
         artikelPayload.setAuthor(artikel.getAuthor());
@@ -113,6 +117,7 @@ public class ArtikelService {
     }
 
     public String handleLikedArtikel(ArtikelPayload artikel, String email) throws InterruptedException,ExecutionException{
+        Artikel artikel1 = getArtikelById(artikel.getIdArtikel());
         Pengguna pengguna = penggunaService.getPengguna(email);
         Firestore dbFirestore = FirestoreClient.getFirestore();
         if(pengguna.getListIdLikedArtikel() == null){
@@ -121,10 +126,14 @@ public class ArtikelService {
         }
         if(artikel.isLiked()){
             pengguna.getListIdLikedArtikel().add(artikel.getIdArtikel());
+            artikel1.setJumlahLike(artikel1.getJumlahLike() + 1);
+            dbFirestore.collection("Artikel").document(artikel1.getIdArtikel()).set(artikel1);
             dbFirestore.collection("Pengguna").document(pengguna.getEmail()).set(pengguna);
             return "Artikel berhasil dilike";
         }else {
             pengguna.getListIdLikedArtikel().remove(artikel.getIdArtikel());
+            artikel1.setJumlahLike(artikel1.getJumlahLike() - 1);
+            dbFirestore.collection("Artikel").document(artikel1.getIdArtikel()).set(artikel1);
             dbFirestore.collection("Pengguna").document(pengguna.getEmail()).set(pengguna);
             return "Artikel berhasil diunlike";
         }

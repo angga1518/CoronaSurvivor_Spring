@@ -16,6 +16,7 @@ public class ArtikelPayload {
     private int jumlahLike;
     private List<String> listIdComment;
     private String imageUrl;
+    private boolean isSaved = false;
 
     public boolean isLiked() {
         return isLiked;
@@ -103,5 +104,13 @@ public class ArtikelPayload {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public boolean isSaved() {
+        return isSaved;
+    }
+
+    public void setSaved(boolean saved) {
+        isSaved = saved;
     }
 }

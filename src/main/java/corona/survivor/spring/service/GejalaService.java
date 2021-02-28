@@ -1,5 +1,6 @@
 package corona.survivor.spring.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -31,7 +32,7 @@ import corona.survivor.spring.service.CalendarService;
 
 @Service
 public class GejalaService {
-    public static final String COL_NAME="Gejala";
+    public static final String COL_NAME = "Gejala";
 
     @Autowired
     FirebaseInitialize db;
@@ -49,68 +50,88 @@ public class GejalaService {
         Calendar calendarModel = calendarService.getCalendar(gejalaModel.getNomorKalender());
         boolean checkGejala = checkGejala(gejalaModel.getNamaGejala(), calendarModel);
 
-        if(checkGejala == true){
+        if (checkGejala == true) {
             calendarModel.getListGejala().add(gejalaModel.getNomorGejala());
+            calendarModel.getListNamaGejala().add(gejalaModel.getNamaGejala());
 
-            if(calendarModel.getAllGejalaAwalAdded() == false){
+            if (calendarModel.getAllGejalaAwalAdded() == false) {
                 // calendarService.calculateSembuhAwal(calendarModel.getNomorKalender());
-            }else{
+            } else {
                 calendarService.calculateSembuhDelay(calendarModel.getNomorKalender(), uuid);
             }
-    
-            collectionsApiFuture = dbFirestore.collection(COL_NAME).document(gejalaModel.getNomorGejala()).set(gejalaModel); 
-            collectionsApiFuture = dbFirestore.collection("Calendar").document(gejalaModel.getNomorKalender()).set(calendarModel); 
-            System.out.println("aaaa ditambahkan: " + gejalaModel.getNomorGejala());
-            
+
+            collectionsApiFuture = dbFirestore.collection(COL_NAME).document(gejalaModel.getNomorGejala())
+                    .set(gejalaModel);
+            collectionsApiFuture = dbFirestore.collection("Calendar").document(gejalaModel.getNomorKalender())
+                    .set(calendarModel);
+
             return gejalaModel;
-        }else{
+        } else {
             return null;
         }
 
     }
 
-    public boolean checkGejala(String newGejala, Calendar targetCalendar){
-        try{
+    public boolean checkGejala(String newGejala, Calendar targetCalendar) {
+        try {
             List<String> targetListGejala = targetCalendar.getListGejala();
-            for(String nomorGejala : targetListGejala){
+            for (String nomorGejala : targetListGejala) {
                 String namaGejala = getGejala(nomorGejala).getNamaGejala();
-                if(namaGejala.equals(newGejala)) return false;
+                if (namaGejala.equals(newGejala))
+                    return false;
             }
             return true;
 
-        }catch(Exception e){
+        } catch (Exception e) {
             return false;
         }
     }
 
-    public Gejala getGejala(String uuid) throws InterruptedException, ExecutionException{
-        try{    
-        CollectionReference allGejala = db.getFirebase().collection("Gejala");
-        ApiFuture<QuerySnapshot> querySnapshot = allGejala.get();
-        for (DocumentSnapshot doc : querySnapshot.get().getDocuments()){
-            Gejala temp = doc.toObject(Gejala.class);
-            if (temp.getNomorGejala().equals(uuid)){
-                return temp;
+    public Gejala getGejala(String uuid) throws InterruptedException, ExecutionException {
+        try {
+            CollectionReference allGejala = db.getFirebase().collection("Gejala");
+            ApiFuture<QuerySnapshot> querySnapshot = allGejala.get();
+            for (DocumentSnapshot doc : querySnapshot.get().getDocuments()) {
+                Gejala temp = doc.toObject(Gejala.class);
+                if (temp.getNomorGejala().equals(uuid)) {
+                    return temp;
+                }
             }
-        }
-        return null;
-        }catch(Exception e){
+            return null;
+        } catch (Exception e) {
             return null;
         }
     }
 
-    public String updateGejalaFromRecovery(List<GejalaDTO> listUpdate) throws InterruptedException, ExecutionException{
-        try{
+    public List<String> getNamaGejalaFromListUuid(List<String> listUuid) throws InterruptedException, ExecutionException {
+        try {
+            List<String> listNamaGejala = new ArrayList<String>();
+            CollectionReference allGejala = db.getFirebase().collection("Gejala");
+            ApiFuture<QuerySnapshot> querySnapshot = allGejala.get();
+            for (DocumentSnapshot doc : querySnapshot.get().getDocuments()) {
+                Gejala temp = doc.toObject(Gejala.class);
+                if (listUuid.contains(temp.getNomorGejala())) {
+                    listNamaGejala.add(temp.getNamaGejala());
+                }
+            }
+            return listNamaGejala;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public String updateGejalaFromRecovery(List<GejalaDTO> listUpdate) throws InterruptedException, ExecutionException {
+        try {
             Firestore dbFirestore = FirestoreClient.getFirestore();
             ApiFuture<WriteResult> collectionsApiFuture;
-            for(GejalaDTO temp : listUpdate){
+            for (GejalaDTO temp : listUpdate) {
                 Gejala targetGejala = getGejala(temp.getUuid());
                 targetGejala.getSequenceDate().add(temp.getDate());
                 targetGejala.getSequenceUpdate().add(temp.getUpdate());
                 collectionsApiFuture = dbFirestore.collection(COL_NAME).document(temp.getUuid()).set(targetGejala);
             }
             return "Berhasil";
-        }catch(Exception e){
+        } catch (Exception e) {
             return "Error";
         }
     }

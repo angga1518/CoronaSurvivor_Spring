@@ -1,5 +1,7 @@
 package corona.survivor.spring.model;
 
+import java.util.Map;
+
 import org.springframework.stereotype.Component;
 
 @Component
@@ -9,6 +11,7 @@ public class PushNotificationRequest {
     private String message;
     private String topic;
     private String token;
+    private Map<String, String> data;
 
     public PushNotificationRequest() {
     }
@@ -49,5 +52,13 @@ public class PushNotificationRequest {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public Map<String, String> getData() {
+        return data;
+    }
+
+    public void setData(Map<String, String> data) {
+        this.data = data;
     }
 }

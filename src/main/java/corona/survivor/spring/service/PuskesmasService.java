@@ -46,4 +46,16 @@ public class PuskesmasService {
         return calendarList;
     }
 
+    public Boolean validateKodePuskesmas(String kodePuskesmas) throws InterruptedException, ExecutionException{
+        CollectionReference allPuskesmas = db.getFirebase().collection("Puskesmas");
+        ApiFuture<QuerySnapshot> querySnapshot = allPuskesmas.get();
+        for (DocumentSnapshot doc : querySnapshot.get().getDocuments()){
+            Puskesmas temp = doc.toObject(Puskesmas.class);
+            if (temp.getKodePuskesmas().equals(kodePuskesmas)){
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

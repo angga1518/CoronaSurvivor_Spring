@@ -32,7 +32,7 @@ public class DataPenerimaDonorController {
         }
         catch (Exception e){
             System.out.println(e);
-            return new BaseResponse<List<DataPenerimaDonor>>(400,"Error Not Found",null);
+            return new BaseResponse<List<DataPenerimaDonor>>(400,"Error Not Found",listDataPenerimaDonor);
         }
         return new BaseResponse<List<DataPenerimaDonor>>(200,"Success",listDataPenerimaDonor);
     }
@@ -60,7 +60,7 @@ public class DataPenerimaDonorController {
         }
     }
 
-    @DeleteMapping("/deleteDataPemberiDonort")
+    @DeleteMapping("/deleteDataPenerimaDonor")
     public BaseResponse<String>deleteDataPenerimaDonor(@RequestParam String idDataPenerimaDonor) {
         String message = dataPenerimaDonorService.deleteDataPemberiDonor(idDataPenerimaDonor);
         return new BaseResponse<String>(200,"Success","Data Penerima Donor telah berhasil dihapus");

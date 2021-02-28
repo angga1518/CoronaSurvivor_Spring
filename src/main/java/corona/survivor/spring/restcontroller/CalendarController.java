@@ -2,12 +2,15 @@ package corona.survivor.spring.restcontroller;
 
 import corona.survivor.spring.model.Calendar;
 import corona.survivor.spring.model.Recovery;
+import corona.survivor.spring.rest.BaseResponse;
 import corona.survivor.spring.model.Gejala;
 import corona.survivor.spring.model.GejalaDTO;
 import corona.survivor.spring.model.ListDTO;
 import corona.survivor.spring.service.CalendarService;
 import corona.survivor.spring.service.RecoveryService;
 import corona.survivor.spring.service.GejalaService;
+import corona.survivor.spring.service.PuskesmasService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.unit.DataSize;
 import org.springframework.web.bind.annotation.*;
@@ -38,12 +41,14 @@ import com.google.firebase.cloud.FirestoreClient;
 
 import corona.survivor.spring.firebase.FirebaseInitialize;
 
-
 @RestController
 public class CalendarController {
 
     @Autowired
     CalendarService calendarService;
+
+    @Autowired
+    PuskesmasService puskesmasService;
 
     @Autowired
     RecoveryService recoveryService;
@@ -53,25 +58,44 @@ public class CalendarController {
 
     @Autowired
     FirebaseInitialize db;
-    
+
     @PostMapping("/createCalendar")
-    public Calendar createDataCalendar(@RequestBody Calendar calendarModel) throws InterruptedException, ExecutionException {
+    public Calendar createDataCalendar(@RequestBody Calendar calendarModel)
+            throws InterruptedException, ExecutionException {
         return calendarService.saveCalendar(calendarModel);
     }
 
     @GetMapping("/calculateSembuhAwal/{nomorCalendar}")
-    public String calculateSembuhAwalCalendar(@PathVariable String nomorCalendar){
-        try{
+    public String calculateSembuhAwalCalendar(@PathVariable String nomorCalendar) {
+        try {
             calendarService.calculateSembuhAwal(nomorCalendar);
             return "Success";
-        }catch(Exception e){
+        } catch (Exception e) {
             return "Error";
         }
     }
 
+    @GetMapping("/getCalendar/{emailPengguna}")
+    public BaseResponse<Calendar> getCalendarByEmailPengguna(@PathVariable String emailPengguna) {
+        try {
+            List<String> listNamaGejala = new ArrayList<String>();
+            Calendar calendar = calendarService.getCalendarByEmailPengguna(emailPengguna);
+            if (calendar == null) {
+                return new BaseResponse<Calendar>(400, "Error Not Found", null);
+            }
+            if(calendar.getListGejala().size()!=calendar.getListNamaGejala().size()){
+                listNamaGejala = gejalaService.getNamaGejalaFromListUuid(calendar.getListGejala());
+                calendar.setListNamaGejala(listNamaGejala);
+            }
+            return new BaseResponse<Calendar>(200, "Success", calendar);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     @GetMapping("/getColors/{nomorCalendar}")
-    public Map<String, Object> getColors(@PathVariable String nomorCalendar){
-        try{
+    public Map<String, Object> getColors(@PathVariable String nomorCalendar) {
+        try {
             Map<String, Object> response = new HashMap<String, Object>();
             Calendar targetCalendar = calendarService.getCalendar(nomorCalendar);
             response.put("startDate", targetCalendar.getStartRed());
@@ -79,12 +103,12 @@ public class CalendarController {
             response.put("yellow", targetCalendar.getYellow());
             response.put("lastDate", targetCalendar.getLastDate());
             return response;
-        }catch(Exception e){
+        } catch (Exception e) {
             return null;
         }
 
     }
-    
+
     @GetMapping("connect/{nomorCalendar}/{nomorPuskesmas}")
     public String connectCalendarPuskesmas (@PathVariable String nomorCalendar, @PathVariable String nomorPuskesmas){
         try{
@@ -106,10 +130,9 @@ public class CalendarController {
         }
     }
 
-    public int daysBetween(Date d1, Date d2){
-        return (int)( (d2.getTime() - d1.getTime()) / (1000 * 60 * 60 * 24));
+    public int daysBetween(Date d1, Date d2) {
+        return (int) ((d2.getTime() - d1.getTime()) / (1000 * 60 * 60 * 24));
     }
-
 
     //Date nya bentuknya mm-dd-yyyy
     @GetMapping("getRecovery/{nomorCalendar}/{date}")
@@ -157,11 +180,11 @@ public class CalendarController {
     }
 
     @PostMapping("/updateGejalaFromRecovery/{nomorCalendar}")
-    public String updateGejalaFromRecovery(@PathVariable String nomorCalendar, @RequestBody ListDTO listDTO){
-        try{
+    public String updateGejalaFromRecovery(@PathVariable String nomorCalendar, @RequestBody ListDTO listDTO) {
+        try {
             String status = gejalaService.updateGejalaFromRecovery(listDTO.getList());
             return status;
-        }catch(Exception e){
+        } catch (Exception e) {
             return "Error";
         }
     }
