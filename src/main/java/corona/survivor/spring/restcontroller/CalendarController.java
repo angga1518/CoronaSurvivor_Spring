@@ -13,12 +13,17 @@ import org.springframework.util.unit.DataSize;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.CollectionReference;
@@ -83,10 +88,17 @@ public class CalendarController {
     @GetMapping("connect/{nomorCalendar}/{nomorPuskesmas}")
     public String connectCalendarPuskesmas (@PathVariable String nomorCalendar, @PathVariable String nomorPuskesmas){
         try{
+            ApiFuture<WriteResult> collectionsApiFuture;
+            Firestore dbFirestore = FirestoreClient.getFirestore();
             Calendar targetCalendar = calendarService.getCalendar(nomorCalendar);
             targetCalendar.setKodePuskesmas(nomorPuskesmas);
-            Firestore dbFirestore = FirestoreClient.getFirestore();
-            ApiFuture<WriteResult> collectionsApiFuture2 = dbFirestore.collection("Calendar").document(targetCalendar.getNomorKalender()).set(targetCalendar);
+            List<String> listRecovery = targetCalendar.getListRecovery();
+            for(String idRecov : listRecovery){
+                Recovery recovery  = recoveryService.getRecovery(idRecov);
+                recovery.setStatus(2);
+                collectionsApiFuture = dbFirestore.collection("Recovery").document(recovery.getNomorRecovery()).set(recovery);
+            }
+            collectionsApiFuture = dbFirestore.collection("Calendar").document(targetCalendar.getNomorKalender()).set(targetCalendar);
 
             return "Success";
         }catch(Exception e){
@@ -106,12 +118,23 @@ public class CalendarController {
             Map<String, Object> response = new HashMap<String, Object>();
 
             Calendar targetCalendar = calendarService.getCalendar(nomorCalendar);
-            System.out.println("aaaa " + "masuk method getrecovery");
+            System.out.println("debug: " + "masuk method getrecovery");
             Date targetDate = new SimpleDateFormat("MM-dd-yyyy").parse(date);
-            System.out.println("aaaa " + "masuk method getrecovery 2 " + targetDate.toString());
-            int targetIndex = daysBetween(targetCalendar.getStartRed(), targetDate);
+            System.out.println("debug: " + "masuk method getrecovery 2 " + targetDate.toString());
+
+            Date input1 = targetCalendar.getStartRed();
+            LocalDate date1 = input1.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+            Date input2 = targetDate;
+            LocalDate date2 = input1.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+            long diffInDays = ChronoUnit.DAYS.between(date1, date2);
+            
+            int targetIndex = (int) diffInDays;
+            // int targetIndex = daysBetween(targetCalendar.getStartRed(), targetDate);
             if(targetIndex < 0) targetIndex = 0;
-            System.out.println("aaaa " + "ERROR " + targetIndex);
+
+            System.out.println("debug: " + "ERROR " + targetIndex);
             String targetRecoveryId = targetCalendar.getListRecovery().get(targetIndex);
             Recovery targetRecovery = recoveryService.getRecovery(targetRecoveryId);
 

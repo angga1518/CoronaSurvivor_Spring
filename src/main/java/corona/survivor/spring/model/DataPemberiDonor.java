@@ -1,9 +1,9 @@
 package corona.survivor.spring.model;
 
-import org.springframework.format.annotation.DateTimeFormat;
+// import org.springframework.format.annotation.StringTimeFormat;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
+// import java.util.String;
 import java.util.List;
 
 @Component()
@@ -20,19 +20,19 @@ public class DataPemberiDonor {
     private String rhesus;
     private String beratBadan;
     private String catatanTambahan;
-    private boolean isMelahirkan;
+    private String melahirkan;
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    private Date tanggalLahir;
+    // @StringTimeFormat(iso = StringTimeFormat.ISO.String)
+    private String tanggalLahir;
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    private Date tanggalSembuh;
+    // @StringTimeFormat(iso = StringTimeFormat.ISO.String)
+    private String tanggalSembuh;
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    private Date tanggalSimpan;
+    // @StringTimeFormat(iso = StringTimeFormat.ISO.String)
+    private String tanggalSimpan;
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    private Date tanggalInfeksi;
+    // @StringTimeFormat(iso = StringTimeFormat.ISO.String)
+    private String tanggalInfeksi;
 
     private String emailPendaftar;
 
@@ -46,7 +46,7 @@ public class DataPemberiDonor {
         super();
     }
 
-    public DataPemberiDonor(String idDataPemberiDonor, String namaLengkap, String NIK, String jenisKelamin, String golonganDarah, String domisili, String noTelepon, String email, String rhesus, String beratBadan, String catatanTambahan, boolean isMelahirkan, Date tanggalLahir, Date tanggalSembuh, Date tanggalSimpan, Date tanggalInfeksi, String emailPendaftar, List<String> gejala, List<String> riwayatPenyakit, boolean isHimself) {
+    public DataPemberiDonor(String idDataPemberiDonor, String namaLengkap, String NIK, String jenisKelamin, String golonganDarah, String domisili, String noTelepon, String email, String rhesus, String beratBadan, String catatanTambahan, String melahirkan, String tanggalLahir, String tanggalSembuh, String tanggalSimpan, String tanggalInfeksi, String emailPendaftar, List<String> gejala, List<String> riwayatPenyakit, boolean isHimself) {
         this.idDataPemberiDonor = idDataPemberiDonor;
         this.namaLengkap = namaLengkap;
         this.NIK = NIK;
@@ -58,7 +58,7 @@ public class DataPemberiDonor {
         this.rhesus = rhesus;
         this.beratBadan = beratBadan;
         this.catatanTambahan = catatanTambahan;
-        this.isMelahirkan = isMelahirkan;
+        this.melahirkan = melahirkan;
         this.tanggalLahir = tanggalLahir;
         this.tanggalSembuh = tanggalSembuh;
         this.tanggalSimpan = tanggalSimpan;
@@ -157,43 +157,43 @@ public class DataPemberiDonor {
         this.catatanTambahan = catatanTambahan;
     }
 
-    public boolean isMelahirkan() {
-        return isMelahirkan;
+    public String getMelahirkan() {
+        return melahirkan;
     }
 
-    public void setMelahirkan(boolean melahirkan) {
-        isMelahirkan = melahirkan;
+    public void setMelahirkan(String melahirkan) {
+        this.melahirkan = melahirkan;
     }
 
-    public Date getTanggalLahir() {
+    public String getTanggalLahir() {
         return tanggalLahir;
     }
 
-    public void setTanggalLahir(Date tanggalLahir) {
+    public void setTanggalLahir(String tanggalLahir) {
         this.tanggalLahir = tanggalLahir;
     }
 
-    public Date getTanggalSembuh() {
+    public String getTanggalSembuh() {
         return tanggalSembuh;
     }
 
-    public void setTanggalSembuh(Date tanggalSembuh) {
+    public void setTanggalSembuh(String tanggalSembuh) {
         this.tanggalSembuh = tanggalSembuh;
     }
 
-    public Date getTanggalSimpan() {
+    public String getTanggalSimpan() {
         return tanggalSimpan;
     }
 
-    public void setTanggalSimpan(Date tanggalSimpan) {
+    public void setTanggalSimpan(String tanggalSimpan) {
         this.tanggalSimpan = tanggalSimpan;
     }
 
-    public Date getTanggalInfeksi() {
+    public String getTanggalInfeksi() {
         return tanggalInfeksi;
     }
 
-    public void setTanggalInfeksi(Date tanggalInfeksi) {
+    public void setTanggalInfeksi(String tanggalInfeksi) {
         this.tanggalInfeksi = tanggalInfeksi;
     }
 

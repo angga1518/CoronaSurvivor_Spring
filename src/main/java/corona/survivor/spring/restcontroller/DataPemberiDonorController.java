@@ -18,6 +18,7 @@ public class DataPemberiDonorController {
     @PostMapping("/createDataPemberiDonor")
     public BaseResponse<DataPemberiDonor> createDataPemberiDonor(@RequestBody DataPemberiDonor dataPemberiDonor) throws InterruptedException, ExecutionException {
         DataPemberiDonor dataPemberiDonorCreated = dataPemberiDonorService.saveDataPemberiDonor(dataPemberiDonor);
+        System.out.println(dataPemberiDonorCreated.getMelahirkan());
         return new BaseResponse<DataPemberiDonor>(200,"Success",dataPemberiDonor);
     }
 
