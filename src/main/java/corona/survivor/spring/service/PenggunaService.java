@@ -19,11 +19,18 @@ public class PenggunaService {
 
     public Pengguna createPengguna(Pengguna pengguna) throws InterruptedException, ExecutionException {
         Firestore dbFirestore = FirestoreClient.getFirestore();
-        dbFirestore.collection(COL_NAME).document(pengguna.getEmail()).set(pengguna);
-        return pengguna;
+        DocumentReference documentReference = dbFirestore.collection(COL_NAME).document(pengguna.getEmail());
+        ApiFuture<DocumentSnapshot> future = documentReference.get();
+        DocumentSnapshot document = future.get();
+        if (document.exists()) {
+            return null;
+        } else {
+            dbFirestore.collection(COL_NAME).document(pengguna.getEmail()).set(pengguna);
+            return pengguna;
+        }
     }
 
-    public Pengguna setTokenPengguna(Map<String,String> mapToken) throws InterruptedException, ExecutionException {
+    public Pengguna setTokenPengguna(Map<String, String> mapToken) throws InterruptedException, ExecutionException {
         Firestore dbFirestore = FirestoreClient.getFirestore();
         DocumentReference documentReference = dbFirestore.collection(COL_NAME).document(mapToken.get("email"));
         ApiFuture<DocumentSnapshot> future = documentReference.get();
