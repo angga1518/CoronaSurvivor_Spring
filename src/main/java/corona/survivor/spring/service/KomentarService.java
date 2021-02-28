@@ -7,12 +7,14 @@ import corona.survivor.spring.firebase.FirebaseInitialize;
 import corona.survivor.spring.model.Artikel;
 import corona.survivor.spring.model.Komentar;
 import corona.survivor.spring.model.Pengguna;
-import corona.survivor.spring.rest.ArtikelPayload;
 import corona.survivor.spring.rest.KomentarPayload;
+import corona.survivor.spring.rest.ListKomentarPayload;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
@@ -35,6 +37,9 @@ public class KomentarService {
         final String uuid = UUID.randomUUID().toString().replace("-", "");
         komentar.setIdKomentar(uuid);
         Firestore dbFirestore = FirestoreClient.getFirestore();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/YYYY hh:mm a");
+        String dateString = sdf.format(new Date());
+        komentar.setTanggalPost(dateString);
         Artikel artikel = artikelService.getArtikelById(idArtikel);
         if(artikel.getListIdComment() == null){
             List<String> listIdComment = new ArrayList<>();
@@ -51,6 +56,9 @@ public class KomentarService {
         komentar.setIdKomentar(uuid);
         Firestore dbFirestore = FirestoreClient.getFirestore();
         Komentar parentKomentar = getKomentarById(idParentKomentar);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/YYYY hh:mm a");
+        String dateString = sdf.format(new Date());
+        komentar.setTanggalPost(dateString);
         if(parentKomentar.getListIdReply() == null){
             List<String> listIdReplies = new ArrayList<>();
             parentKomentar.setListIdReply(listIdReplies);
@@ -82,7 +90,7 @@ public class KomentarService {
         List<Komentar> listKomentar = new ArrayList<Komentar>();
         Artikel artikel = artikelService.getArtikelById(idArtikel);
         List<String> listIdKomentar = artikel.getListIdComment();
-        if(listIdKomentar != null){
+        if(!(listIdKomentar.isEmpty())){
             CollectionReference komentar = db.getFirebase().collection(COL_NAME);
             ApiFuture<QuerySnapshot> querySnapshot = komentar.get();
             for (DocumentSnapshot doc : querySnapshot.get().getDocuments()) {
@@ -109,42 +117,44 @@ public class KomentarService {
             komentarPayload.setTanggalPost(komentar.getTanggalPost());
             List<Komentar> initializeListPayload = new ArrayList<>();
             komentarPayload.setReplies(initializeListPayload);
-            if(pengguna.getListIdLikedKomentar() != null){
+            if(!(pengguna.getListIdLikedKomentar().isEmpty())){
                 List<String> listLikedKomentar = pengguna.getListIdLikedKomentar();
-                if(pengguna.getListIdLikedKomentar().contains(komentar.getIdKomentar())){
+                if(listLikedKomentar.contains(komentar.getIdKomentar())){
                     komentarPayload.setLiked(true);
                 }
             }
-            for (String idReply : komentar.getListIdReply()){
-                Komentar reply = getKomentarById(idReply);
-                komentarPayload.getReplies().add(reply);
+            if(komentar.getListIdReply() != null){
+                for (String idReply : komentar.getListIdReply()){
+                    Komentar reply = getKomentarById(idReply);
+                    komentarPayload.getReplies().add(reply);
+                }
             }
             komentarPayloadList.add(komentarPayload);
         }
         return komentarPayloadList;
     }
 
-    public String handleLikedKomentar(KomentarPayload komentarPayload, String email) throws InterruptedException,ExecutionException{
-        Komentar komentar = getKomentarById(komentarPayload.getIdKomentar());
-        Pengguna pengguna = penggunaService.getPengguna(email);
-        Firestore dbFirestore = FirestoreClient.getFirestore();
-        if(pengguna.getListIdLikedKomentar() == null){
-            List<String> iniatializeList = new ArrayList<>();
-            pengguna.setListIdLikedKomentar(iniatializeList);
+    public String handleLikedKomentar(ListKomentarPayload listKomentarPayload, String email) throws InterruptedException,ExecutionException{
+        for(KomentarPayload komentarPayload : listKomentarPayload.getListKomentarPayload()){
+            Komentar komentar = getKomentarById(komentarPayload.getIdKomentar());
+            Pengguna pengguna = penggunaService.getPengguna(email);
+            Firestore dbFirestore = FirestoreClient.getFirestore();
+            if(pengguna.getListIdLikedKomentar() == null){
+                List<String> iniatializeList = new ArrayList<>();
+                pengguna.setListIdLikedKomentar(iniatializeList);
+            }
+            if(komentarPayload.isLiked()){
+                pengguna.getListIdLikedKomentar().add(komentarPayload.getIdKomentar());
+                komentar.setJumlahLike(komentar.getJumlahLike() + 1);
+                dbFirestore.collection("Komentar").document(komentar.getIdKomentar()).set(komentar);
+                dbFirestore.collection("Pengguna").document(pengguna.getEmail()).set(pengguna);
+            }else {
+                pengguna.getListIdLikedKomentar().remove(komentarPayload.getIdKomentar());
+                komentar.setJumlahLike(komentar.getJumlahLike() - 1);
+                dbFirestore.collection("Komentar").document(komentar.getIdKomentar()).set(komentar);
+                dbFirestore.collection("Pengguna").document(pengguna.getEmail()).set(pengguna);
+            }
         }
-        if(komentarPayload.isLiked()){
-            pengguna.getListIdLikedKomentar().add(komentarPayload.getIdKomentar());
-            komentar.setJumlahLike(komentar.getJumlahLike() + 1);
-            dbFirestore.collection("Komentar").document(komentar.getIdKomentar()).set(komentar);
-            dbFirestore.collection("Pengguna").document(pengguna.getEmail()).set(pengguna);
-            return "komentar berhasil dilike";
-        }else {
-            pengguna.getListIdLikedKomentar().remove(komentarPayload.getIdKomentar());
-            komentar.setJumlahLike(komentar.getJumlahLike() - 1);
-            dbFirestore.collection("Komentar").document(komentar.getIdKomentar()).set(komentar);
-            dbFirestore.collection("Pengguna").document(pengguna.getEmail()).set(pengguna);
-            return "Artikel berhasil diunlike";
-        }
+        return "Berhasil di handle";
     }
-
 }

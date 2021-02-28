@@ -1,9 +1,9 @@
 package corona.survivor.spring.rest;
 
 import corona.survivor.spring.model.Komentar;
+import org.joda.time.DateTime;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.util.Date;
 import java.util.List;
 
 public class KomentarPayload {
@@ -11,8 +11,7 @@ public class KomentarPayload {
     private String idKomentar;
     private String namaLengkap;
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    private Date tanggalPost;
+    private String tanggalPost;
 
     private String isi;
     private int jumlahLike;
@@ -36,11 +35,11 @@ public class KomentarPayload {
         this.namaLengkap = namaLengkap;
     }
 
-    public Date getTanggalPost() {
+    public String getTanggalPost() {
         return tanggalPost;
     }
 
-    public void setTanggalPost(Date tanggalPost) {
+    public void setTanggalPost(String tanggalPost) {
         this.tanggalPost = tanggalPost;
     }
 

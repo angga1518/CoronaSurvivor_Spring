@@ -80,8 +80,7 @@ public class ArtikelService {
         DocumentSnapshot document = future.get();
 
         Artikel artikel = null;
-
-        if(document.exists()){
+        if(document.getId().equals(idArtikel)){
             artikel = document.toObject(Artikel.class);
             return artikel;
         }
@@ -94,8 +93,14 @@ public class ArtikelService {
         ArtikelPayload artikelPayload = new ArtikelPayload();
         if(pengguna.getListIdLikedArtikel() != null){
             List<String> listLikedArtikel = pengguna.getListIdLikedArtikel();
-            if(pengguna.getListIdLikedArtikel().contains(artikel.getIdArtikel())){
+            if(listLikedArtikel.contains(artikel.getIdArtikel())){
                 artikelPayload.setLiked(true);
+            }
+        }
+        if(pengguna.getListIdArtikelDisimpan() != null){
+            List<String> listSavedArtikel = pengguna.getListIdArtikelDisimpan();
+            if(listSavedArtikel.contains(artikel.getIdArtikel())){
+                artikelPayload.setSaved(true);
             }
         }
         artikelPayload.setAuthor(artikel.getAuthor());
