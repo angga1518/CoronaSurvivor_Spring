@@ -102,6 +102,7 @@ public class CalendarController {
             response.put("red", targetCalendar.getRed());
             response.put("yellow", targetCalendar.getYellow());
             response.put("lastDate", targetCalendar.getLastDate());
+            response.put("status", targetCalendar.getStatus());
             return response;
         } catch (Exception e) {
             return null;
