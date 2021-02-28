@@ -34,13 +34,21 @@ public class PuskesmasService {
     }
 
     public List<Calendar> getAllCalendar(String kodePuskesmas) throws InterruptedException, ExecutionException{
+        System.out.println("debug: " + "masuk");
         List<Calendar> calendarList = new ArrayList<Calendar>();
         CollectionReference allCalendar = db.getFirebase().collection("Calendar");
+        System.out.println("debug: " + "masuk2");
         ApiFuture<QuerySnapshot> querySnapshot = allCalendar.get();
+        System.out.println("debug: " + "masuk3");
         for (DocumentSnapshot doc : querySnapshot.get().getDocuments()){
-            Calendar temp = doc.toObject(Calendar.class);
-            if (temp.getKodePuskesmas().equals(kodePuskesmas)){
-                calendarList.add(temp);
+            System.out.println("debug: " + "masuk4");
+            try{
+                Calendar temp = doc.toObject(Calendar.class);
+                if (temp.getKodePuskesmas().equals(kodePuskesmas)){
+                    calendarList.add(temp);
+                }
+            }catch(Exception e){
+                continue;
             }
         }
         return calendarList;

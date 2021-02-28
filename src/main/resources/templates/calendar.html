@@ -21,25 +21,64 @@
                 <!-- DataTales Example -->
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-danger">Tessssstttt</h6>
+                        <h6 th:text="${email}" class="m-0 font-weight-bold text-danger"></h6>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
+
+                            <label class="font-weight-bold">Nama Lengkap : </label>
+                            <p th:text="${pengguna.namaLengkap}"></p>
+
+                            <label class="font-weight-bold">Email : </label>
+                            <p th:text="${email}"></p>
+
+                            <label class="font-weight-bold">Domisili : </label>
+                            <p th:text="${pengguna.domisili}"></p>
+
+                            <label class="font-weight-bold">Tanggal Lahir : </label>
+                            <p th:text="${pengguna.tanggalLahir}"></p>
+
+                            <label class="font-weight-bold">NoTelepon : </label>
+                            <p th:text="${pengguna.noTelepon}"></p>
+
+                            <label class="font-weight-bold">NIK: </label>
+                            <p th:text="${calendar.nik}"></p>
+
+                            <label class="font-weight-bold">Tanggal Muncul Gejala: </label>
+                            <p th:text="${calendar.tanggalMunculGejala}"></p>
+
+                            <label class="font-weight-bold">Tanggal Positif: </label>
+                            <p th:text="${calendar.tanggalPositif}"></p>
+
+                            <label class="font-weight-bold">Gejala: </label>
+                            <div th:each="p : ${listGejala}">
+                                <p th:text="${p}"></p>
+                            </div>
+                            
+                            <br>
+
                             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                 <thead>
                                 <tr>
-                                    <th>Email Pasien</th>
-                                    <th>Calendar</th>
+                                    <th>Tanggal</th>
+                                    <th>Detail</th>
+                                    <th>Status</th>
 
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr th:each="p : ${listCalendar}">
-                                    <th th:text="${p.emailPengguna}" class="font-weight-normal"></th>
+                                <tr th:each="p : ${listRecovery}">
+                                    <th th:text="${p.tanggalKalender}" class="font-weight-normal"></th>
 
                                     <th>
-                                        <a th:href="@{/viewCalendar/} + ${p.emailPengguna}" class="btn btn-danger">View</a>
+                                        <a th:href="@{/viewRecovery/} + ${p.nomorRecovery}" class="btn btn-danger btn-sm">View</a>
                                     </th>
+
+                                    <th>
+                                        <p class="text-danger" th:if="${p.status == 2 && p.feedback == null}"> Belum Diberi Feedback</p>
+                                        <p th:if="${p.status == 3 || p.feedback !=null }"> Sudah Diberi Feedback</p>
+                                    </th>
+
                                 </tr>
                                 </tbody>
                             </table>

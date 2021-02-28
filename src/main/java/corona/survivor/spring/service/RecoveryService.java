@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import corona.survivor.spring.firebase.FirebaseInitialize;
-import corona.survivor.spring.model.Calendar;
+import corona.survivor.spring.model.*;
 import corona.survivor.spring.model.Gejala;
 import corona.survivor.spring.model.Recovery;
 
@@ -26,7 +26,7 @@ import com.google.firebase.cloud.FirestoreClient;
 
 import corona.survivor.spring.firebase.FirebaseInitialize;
 
-import corona.survivor.spring.service.CalendarService;
+import corona.survivor.spring.service.*;
 
 @Service
 public class RecoveryService {
@@ -37,6 +37,12 @@ public class RecoveryService {
 
     @Autowired
     CalendarService calendarService;
+
+    @Autowired
+    PushNotificationService pnService;
+
+    @Autowired 
+    PenggunaService penggunaService;
 
     public Recovery saveRecovery(Recovery recoveryModel) throws InterruptedException, ExecutionException {
         final String uuid = UUID.randomUUID().toString().replace("-", "");
@@ -77,11 +83,22 @@ public class RecoveryService {
         }
     }
 
+    public void updateRecovery(Recovery a){
+        Firestore dbFirestore = FirestoreClient.getFirestore();
+        ApiFuture<WriteResult> collectionsApiFuture = dbFirestore.collection(COL_NAME).document(a.getNomorRecovery()).set(a);
+    }
+
     public Recovery updateRecovery(String uuid, String update) throws InterruptedException, ExecutionException{
         try{
             Recovery recoveryModel = getRecovery(uuid);
             recoveryModel.setFeedback(update);
             recoveryModel.setStatus(3);
+            PushNotificationRequest req = new PushNotificationRequest("Perkembangan Anda telah diberi feedback oleh puskesmas!", 
+            "Buka app untuk melihat feedback Anda", "MyCalendar");
+            Pengguna pengguna = penggunaService.getPengguna(recoveryModel.getEmailPengguna().strip());
+
+            req.setToken(pengguna.getToken());
+            pnService.sendPushNotification(req);
 
             Firestore dbFirestore = FirestoreClient.getFirestore();
             ApiFuture<WriteResult> collectionsApiFuture = dbFirestore.collection(COL_NAME).document(uuid).set(recoveryModel);

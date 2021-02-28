@@ -1,5 +1,6 @@
 package corona.survivor.spring.model;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -22,6 +23,14 @@ public class Recovery {
     private double suhuTubuh;
     private int saturasi;
     private String emailPengguna;
+
+    public String convertTanggal(Date date){
+        SimpleDateFormat sdf = new SimpleDateFormat("mm-dd-YYYY");
+        String dateString = sdf.format(date);
+        // System.out.println("aaaaaaa");
+        // System.out.println(dateString);
+        return dateString;
+    }
 
 
     public double getSuhuTubuh() {
